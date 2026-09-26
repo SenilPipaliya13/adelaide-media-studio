@@ -1,31 +1,19 @@
-# TASK: Phase 1 — Project Scaffolding, Multi-Genre Architecture & Booking Engine
+# TASK: Transition to Bespoke Proposal & Custom Quote Model (No Fixed Prices)
 
-1. App Scaffolding:
-   - Scaffold a fresh Next.js 15 App Router project in the current directory with TypeScript, Tailwind CSS, and ESLint.
-   - Configure Tailwind with a modern editorial palette (deep obsidian, slate gray, warm off-white, and subtle copper/gold accents).
+1. Remove Hardcoded Prices from UI:
+   - In `components/inquiry-form.tsx` and all page routes (`/`, `/weddings`, `/commercial`, `/real-estate`, `/sports`):
+     * Remove all visible dollar figures (no "$350", "$2,800", etc.).
+     * Replace the running cash total box with a dynamic "Estimated Scope Summary" that clearly lists the selected package deliverables, location scope, and active add-ons.
+     * Update the submit button text to: "Request Tailored Quote".
+     * Add a direct booking notice below the form: "Prefer a faster response? DM us on Instagram @spmediaco or call us directly."
 
-2. Core Routes & Landing Shells:
-   - `/` — Master portal highlighting SP Media Co., multi-vertical showcase, equipment credibility (R6 Mark III full-frame), and direct call-to-action.
-   - `/weddings` — Tailored for Adelaide Hills, Barossa, and McLaren Vale couples.
-   - `/commercial` — Geared for corporate headshots, events, and Lot Fourteen startups.
-   - `/real-estate` — Highlighting the $350 AUD Listing Package (interior/exterior stills, 2-3 drone video cutaways, agent talking-head reel).
-   - `/sports` — Fast action and team media days.
+2. Keep Internal Pricing Engine (`lib/pricing.ts`):
+   - Retain the pricing math internally for server-side evaluation only so the studio knows the floor cost of the lead, but do NOT send dollar figures back in the client-facing API response.
 
-3. Interactive Quote & Booking Component:
-   - Create `components/inquiry-form.tsx` featuring an interactive estimate calculator:
-     * Niche selector
-     * Location input (with quick Adelaide selector: CBD, North Adelaide, Glenelg, Hills, etc.)
-     * Add-ons toggle: Aerial Drone Video, Fast 24-hr Turnaround, Extra Hours
-     * Dynamic instant price preview in AUD
-     * Client details (Name, Email, Phone, Preferred Date)
-   - Create `app/api/inquire/route.ts` to receive and validate inquiries via JSON.
+3. Update API Response (`app/api/inquire/route.ts`):
+   - Modify the 201 JSON return object to omit public price numbers:
+     `{ ok: true, reference: string, message: "Thank you. We will review your brief and send a bespoke proposal within 24 hours." }`
 
-4. SEO & Schema Setup:
-   - Create `lib/seo.ts` with injected LocalBusiness schema:
-     * Name: "SP Media Co."
-     * Area served: "Adelaide, South Australia"
-     * Latitude / Longitude: -34.9285, 138.6007
-
-5. Verification:
-   - Run `npm run build` and ensure the production build finishes green.
-   - Write a summary of created files and endpoints to `STATUS.md`.
+4. Verification:
+   - Ensure `npm run build` passes with zero errors.
+   - Update `STATUS.md` with the changes.

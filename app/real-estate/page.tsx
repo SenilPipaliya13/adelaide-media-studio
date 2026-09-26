@@ -3,9 +3,9 @@ import { Clapperboard, Home, Plane } from "lucide-react";
 import { VerticalPage } from "@/components/vertical-page";
 
 export const metadata: Metadata = {
-  title: "Real Estate Photography Adelaide | $350 Listing Package",
+  title: "Real Estate Photography Adelaide | Listing Package",
   description:
-    "HDR interior and exterior stills, drone video cutaways and an agent talking-head reel for Adelaide property listings, from $350 AUD.",
+    "HDR interior and exterior stills, drone video cutaways and an agent talking-head reel for Adelaide property listings, in one intro Listing Package.",
   alternates: { canonical: "/real-estate" },
 };
 
@@ -14,9 +14,9 @@ export default function RealEstatePage() {
     <VerticalPage
       niche="real-estate"
       eyebrow="Real Estate"
-      title="List it with stills, sky and a story, all in one visit for $350."
+      title="List it with stills, sky and a story, all in one visit."
       intro="Our intro Listing Package gives Adelaide agents everything a campaign needs from a single booking: bright HDR photography, aerial cutaways and a short reel with you on camera."
-      priceNote="Listing Package: $350 AUD"
+      priceNote="Intro Listing Package, quoted per property"
       highlights={[
         {
           icon: Home,

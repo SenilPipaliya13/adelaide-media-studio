@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { InquiryForm } from "@/components/inquiry-form";
 import { JsonLd } from "@/components/json-ld";
-import { NICHES, formatAud, type Niche } from "@/lib/pricing";
+import { NICHES, type Niche } from "@/lib/catalog";
 import { BUSINESS_NAME, SITE_URL } from "@/lib/seo";
 
 export interface VerticalPageProps {
@@ -30,11 +30,6 @@ export function VerticalPage({
     provider: { "@id": `${SITE_URL}/#business`, name: BUSINESS_NAME },
     areaServed: locations.map((name) => ({ "@type": "Place", name })),
     url: `${SITE_URL}/${niche}`,
-    offers: {
-      "@type": "Offer",
-      price: NICHES[niche].base,
-      priceCurrency: "AUD",
-    },
   };
 
   return (
@@ -53,10 +48,10 @@ export function VerticalPage({
               href="#inquire"
               className="rounded-md bg-copper px-5 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
             >
-              Get an instant estimate
+              Request a tailored quote
             </a>
             <p className="text-sm text-slate-400">
-              {priceNote ?? `From ${formatAud(NICHES[niche].base)} AUD`}
+              {priceNote ?? "Bespoke proposals, quoted to your brief"}
             </p>
           </div>
         </div>
@@ -86,7 +81,7 @@ export function VerticalPage({
 
       <section id="inquire" className="scroll-mt-24 border-t border-slate-800 bg-obsidian-900/50">
         <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="mb-8 font-serif text-3xl text-ivory">Build your quote</h2>
+          <h2 className="mb-8 font-serif text-3xl text-ivory">Tell us about your shoot</h2>
           <InquiryForm defaultNiche={niche} />
         </div>
       </section>

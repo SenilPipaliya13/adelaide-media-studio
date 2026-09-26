@@ -1,5 +1,52 @@
 # STATUS — SP Media Co.
 
+## Bespoke Proposal & Custom Quote Model (no public prices)
+**Status:** ✅ Complete · 2026-09-26 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. `npm run lint` is also clean.
+
+```
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      183 B         112 kB
+├ ○ /_not-found                            996 B         104 kB
+├ ƒ /api/inquire                           123 B         103 kB
+├ ○ /commercial                            179 B         109 kB
+├ ○ /real-estate                           179 B         109 kB
+├ ○ /sports                                179 B         109 kB
+└ ○ /weddings                              179 B         109 kB
++ First Load JS shared by all             103 kB
+```
+
+### Changes
+| File | Change |
+|---|---|
+| `lib/catalog.ts` (new) | Client-safe catalog with niche labels, summaries, included hours, **deliverables**, location labels and scope (Metro / Regional travel), and `MAX_EXTRA_HOURS`. Contains no dollar figures. |
+| `lib/pricing.ts` | Now **server-only** (`import "server-only"`, which fails the build if a client component imports it). Holds base/hourly rates, travel fees, add-on prices and `calculateEstimate()`. `formatAud` was removed. |
+| `components/inquiry-form.tsx` | Removed every dollar figure, including the add-on hints and the per-hour rate. The "Instant estimate" total was replaced with an **Estimated Scope Summary** that lists package deliverables, location scope and active add-ons. The submit button now reads **"Request Tailored Quote"**. The booking notice "Prefer a faster response? DM us on Instagram @spmediaco or call us directly." sits below the form. The success screen shows the API's `message`. |
+| `components/vertical-page.tsx` | Removed the "From $X AUD" note and the `offers.price` in the Service JSON-LD. The CTA now reads "Request a tailored quote". |
+| `app/page.tsx` | Removed the "From $X" labels from the vertical cards and replaced them with scope notes. The hero CTA and quote-section copy were updated. |
+| `app/real-estate/page.tsx` | Removed $350 from the title tag, meta description, H1 and price note. |
+| `app/api/inquire/route.ts` | The 201 response is now `{ ok, reference, message }`. The server still computes the full estimate for the studio, logs the total, and keeps it on the `inquiry` record for future Supabase storage. |
+| `package.json` | Added the `server-only` dependency. |
+
+### Endpoint: `POST /api/inquire` (updated)
+- `201 { ok: true, reference: "SPM-…", message: "Thank you. We will review your brief and send a bespoke proposal within 24 hours." }`
+- `422 { error, fields }` and `400` are unchanged.
+
+### Verification (`next start`)
+- All 5 pages returned 200. The rendered HTML contains "Estimated Scope Summary", "Request Tailored Quote" and the Instagram/phone notice.
+- No `$NNN` amounts or "AUD" appear in the prerendered HTML. No pricing constants appear in `.next/static` client chunks.
+- A valid wedding inquiry (Barossa, drone, rush, +2 hrs) returned 201 with no price fields. The server log recorded an internal floor of 3520 (2400 + 250 + 150 + 600 + 120 ✓).
+- An empty payload returned 422 with field errors.
+
+### Notes
+- `lib/seo.ts` still sets `priceRange: "$$"` on the LocalBusiness schema. This is a schema.org relative tier rather than a dollar figure, so it was left in place.
+- Lucide v1 has no brand icons, so the booking notice uses `MessageCircle` + `Phone` in place of an Instagram logo.
+- The Phase 1 "Pricing model" table below still reflects the internal rates in `lib/pricing.ts`. Those rates are now internal only.
+
+---
+
 ## Phase 1: Scaffolding, Multi-Genre Architecture & Booking Engine
 **Status:** ✅ Complete · 2026-09-26 (ACST)
 

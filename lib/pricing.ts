@@ -1,58 +1,28 @@
-// Shared pricing model. Used by the client-side estimate calculator and
-// re-run on the server so a submitted estimate can never be tampered with.
+// Internal pricing model. Server-only: it gives the studio the floor cost of a
+// lead and must never be bundled into client code or returned by the API.
+import "server-only";
+import { LOCATIONS, MAX_EXTRA_HOURS, NICHES, type LocationKey, type Niche } from "@/lib/catalog";
 
-export const NICHES = {
-  weddings: {
-    label: "Weddings",
-    base: 2400,
-    includedHours: 8,
-    hourlyRate: 300,
-    summary: "Full-day coverage, 8 hours",
-  },
-  commercial: {
-    label: "Commercial",
-    base: 650,
-    includedHours: 3,
-    hourlyRate: 200,
-    summary: "Headshots, events & brand content, 3 hours",
-  },
-  "real-estate": {
-    label: "Real Estate",
-    base: 350,
-    includedHours: 2,
-    hourlyRate: 150,
-    summary: "Listing package: HDR stills, drone cutaways, agent reel",
-  },
-  sports: {
-    label: "Sports",
-    base: 550,
-    includedHours: 3,
-    hourlyRate: 180,
-    summary: "Match-day action or team media day, 3 hours",
-  },
-} as const;
+const NICHE_RATES: Record<Niche, { base: number; hourlyRate: number }> = {
+  weddings: { base: 2400, hourlyRate: 300 },
+  commercial: { base: 650, hourlyRate: 200 },
+  "real-estate": { base: 350, hourlyRate: 150 },
+  sports: { base: 550, hourlyRate: 180 },
+};
 
-export type Niche = keyof typeof NICHES;
-export const NICHE_KEYS = Object.keys(NICHES) as Niche[];
+const TRAVEL: Record<LocationKey, number> = {
+  cbd: 0,
+  "north-adelaide": 0,
+  glenelg: 0,
+  hills: 60,
+  "mclaren-vale": 100,
+  barossa: 120,
+};
 
-export const LOCATIONS = {
-  cbd: { label: "Adelaide CBD", travel: 0 },
-  "north-adelaide": { label: "North Adelaide", travel: 0 },
-  glenelg: { label: "Glenelg", travel: 0 },
-  hills: { label: "Adelaide Hills", travel: 60 },
-  "mclaren-vale": { label: "McLaren Vale", travel: 100 },
-  barossa: { label: "Barossa Valley", travel: 120 },
-} as const;
-
-export type LocationKey = keyof typeof LOCATIONS;
-export const LOCATION_KEYS = Object.keys(LOCATIONS) as LocationKey[];
-
-export const ADD_ONS = {
+const ADD_ONS = {
   drone: 250,
   rush: 150,
 } as const;
-
-export const MAX_EXTRA_HOURS = 8;
 
 export interface EstimateInput {
   niche: Niche;
@@ -76,8 +46,9 @@ export interface Estimate {
 
 export function calculateEstimate(input: EstimateInput): Estimate {
   const niche = NICHES[input.niche];
+  const rates = NICHE_RATES[input.niche];
   const lines: EstimateLine[] = [
-    { label: `${niche.label} base (${niche.includedHours} hrs)`, amount: niche.base },
+    { label: `${niche.label} base (${niche.includedHours} hrs)`, amount: rates.base },
   ];
 
   if (input.drone) {
@@ -95,17 +66,17 @@ export function calculateEstimate(input: EstimateInput): Estimate {
   const hours = Math.max(0, Math.min(MAX_EXTRA_HOURS, Math.floor(input.extraHours)));
   if (hours > 0) {
     lines.push({
-      label: `Extra hours (${hours} × $${niche.hourlyRate})`,
-      amount: hours * niche.hourlyRate,
+      label: `Extra hours (${hours} × $${rates.hourlyRate})`,
+      amount: hours * rates.hourlyRate,
     });
   }
 
   let travelTbc = true;
   if (input.location) {
-    const loc = LOCATIONS[input.location];
     travelTbc = false;
-    if (loc.travel > 0) {
-      lines.push({ label: `Travel: ${loc.label}`, amount: loc.travel });
+    const travel = TRAVEL[input.location];
+    if (travel > 0) {
+      lines.push({ label: `Travel: ${LOCATIONS[input.location].label}`, amount: travel });
     }
   }
 
@@ -115,10 +86,3 @@ export function calculateEstimate(input: EstimateInput): Estimate {
     travelTbc,
   };
 }
-
-export const formatAud = (n: number) =>
-  new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  }).format(n);

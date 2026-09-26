@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Aperture, Film, Gauge, Heart, Home, Briefcase, Trophy } from "lucide-react";
 import { InquiryForm } from "@/components/inquiry-form";
-import { NICHES, formatAud } from "@/lib/pricing";
 
 const VERTICALS = [
   {
@@ -9,28 +8,28 @@ const VERTICALS = [
     icon: Heart,
     title: "Weddings",
     body: "Barossa, McLaren Vale and Adelaide Hills celebrations, captured with an editorial eye.",
-    price: `From ${formatAud(NICHES.weddings.base)}`,
+    note: "Full-day coverage",
   },
   {
     href: "/commercial",
     icon: Briefcase,
     title: "Commercial",
     body: "Headshots, events and brand content for Lot Fourteen startups and CBD businesses.",
-    price: `From ${formatAud(NICHES.commercial.base)}`,
+    note: "Quoted per brief",
   },
   {
     href: "/real-estate",
     icon: Home,
     title: "Real Estate",
     body: "HDR stills, drone cutaways and an agent reel in a single listing package.",
-    price: `${formatAud(NICHES["real-estate"].base)} package`,
+    note: "Intro listing package",
   },
   {
     href: "/sports",
     icon: Trophy,
     title: "Sports",
     body: "SANFL, athletics and Gather Round action, plus team media days.",
-    price: `From ${formatAud(NICHES.sports.base)}`,
+    note: "Match & media days",
   },
 ];
 
@@ -61,7 +60,7 @@ export default function HomePage() {
               href="#inquire"
               className="inline-flex items-center gap-2 rounded-md bg-copper px-6 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
             >
-              Get an instant quote <ArrowRight className="h-4 w-4" />
+              Request a tailored quote <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#work"
@@ -76,7 +75,7 @@ export default function HomePage() {
       <section id="work" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
         <h2 className="font-serif text-3xl text-ivory md:text-4xl">Four specialties, one studio</h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
-          {VERTICALS.map(({ href, icon: Icon, title, body, price }) => (
+          {VERTICALS.map(({ href, icon: Icon, title, body, note }) => (
             <Link
               key={href}
               href={href}
@@ -86,7 +85,7 @@ export default function HomePage() {
               <h3 className="mt-5 font-serif text-2xl text-ivory">{title}</h3>
               <p className="mt-2 text-slate-300">{body}</p>
               <div className="mt-6 flex items-center justify-between text-sm">
-                <span className="text-slate-400">{price}</span>
+                <span className="text-slate-400">{note}</span>
                 <span className="inline-flex items-center gap-1 text-copper transition group-hover:gap-2">
                   Explore <ArrowRight className="h-4 w-4" />
                 </span>
@@ -119,9 +118,9 @@ export default function HomePage() {
       </section>
 
       <section id="inquire" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-        <h2 className="font-serif text-3xl text-ivory md:text-4xl">Build your quote</h2>
+        <h2 className="font-serif text-3xl text-ivory md:text-4xl">Tell us about your shoot</h2>
         <p className="mb-10 mt-3 text-slate-300">
-          Pick your shoot, location and add-ons to see a price instantly, then send it through.
+          Pick your shoot, location and add-ons. We&apos;ll review your brief and send a bespoke proposal.
         </p>
         <InquiryForm />
       </section>

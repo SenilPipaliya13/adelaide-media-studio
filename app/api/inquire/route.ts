@@ -3,10 +3,10 @@ import {
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
   NICHE_KEYS,
-  calculateEstimate,
   type LocationKey,
   type Niche,
-} from "@/lib/pricing";
+} from "@/lib/catalog";
+import { calculateEstimate } from "@/lib/pricing";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Australian mobile or landline, allowing spaces, dashes and +61.
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please fix the highlighted fields.", fields }, { status: 422 });
   }
 
-  // Recompute on the server; never trust a client-supplied price.
+  // Internal floor cost for the studio only. It is logged and stored, never returned to the client.
   const estimate = calculateEstimate({ niche, location: locationKey, drone, rush, extraHours });
   const reference = `SPM-${Date.now().toString(36).toUpperCase()}`;
 
@@ -93,7 +93,11 @@ export async function POST(req: Request) {
   console.info("[inquire] new inquiry", inquiry.reference, inquiry.niche, inquiry.estimate.total);
 
   return NextResponse.json(
-    { ok: true, reference, estimate: { total: estimate.total, travelTbc: estimate.travelTbc } },
+    {
+      ok: true,
+      reference,
+      message: "Thank you. We will review your brief and send a bespoke proposal within 24 hours.",
+    },
     { status: 201 },
   );
 }
