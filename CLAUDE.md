@@ -21,3 +21,9 @@
 ## Development Protocol
 - Every task must compile cleanly with `npm run build` with zero TypeScript or lint errors.
 - Status, build output, and completed milestones must be logged to `STATUS.md`.
+
+## Orchestration Directive
+- Before processing any task, read `MEMORY.md` to load accumulated learnings and the immutable project standards.
+- If an execution error occurs during build/validation, document the root cause and resolution in `MEMORY.md` under `## Lessons Learned`.
+- Maintain active status and pending backlogs in `STATUS.md`.
+- Sub-agent roles (Architect, Frontend-Dev, Backend-Dev, QA-Auditor) are defined in `agents/README.md`.

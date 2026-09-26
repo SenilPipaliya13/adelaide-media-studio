@@ -1,5 +1,28 @@
 # STATUS — SP Media Co.
 
+## Agentic Multi-Agent Protocol & Project Memory
+**Status:** ✅ Complete · 2026-09-26 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. No application code changed, so the route table is the same as in the previous milestone (`/` 183 B / 113 kB, shared JS 103 kB).
+
+### Changes
+| File | Change |
+|---|---|
+| `MEMORY.md` (new) | Project memory base. It records the fixed standards: Next.js 15 App Router and React 19 conventions, Tailwind v4 tokens in the `@theme` block of `app/globals.css` (no `tailwind.config`), `lib/pricing.ts` and `lib/email.ts` staying `server-only` with no dollar figures on the client, and the business identity (SP Media Co., ABN 46 478 326 745, Adelaide SA). It also has an empty `## Lessons Learned` log for build and validation errors. |
+| `agents/README.md` (new) | Defines the sub-agent roles, what each one owns and how work passes between them: **Architect** (brief evaluation, file impact), **Frontend-Dev** (accessible React, responsive Tailwind), **Backend-Dev** (endpoints, validation, Resend, DB models) and **QA-Auditor** (build, TS strictness, JSON-LD checks). |
+| `CLAUDE.md` | New `## Orchestration Directive` section with four rules: read `MEMORY.md` before any task, record the root cause and resolution of build or validation errors under `## Lessons Learned`, keep status and backlog in `STATUS.md`, and use the roles in `agents/README.md`. |
+
+### Active backlog
+- Supabase `inquiries` table persistence. This is also needed for a hard cap on the launch campaign's 5 places.
+- Confirmation email to the client. Verify the `spmediaco.com.au` sender in Resend.
+- A real Resend send has not been tested yet.
+- Spam protection and rate limiting on `/api/inquire`.
+- Confirm placeholder pricing.
+- Portfolio imagery on Cloudflare R2, ImageGallery JSON-LD and suburb landing pages.
+- Triage the 2 `npm audit` advisories.
+- Test the launch-CTA hash pre-select in a real browser.
+
 ## Email Lead Notifications (Resend)
 **Status:** ✅ Complete · 2026-09-26 (ACST)
 
