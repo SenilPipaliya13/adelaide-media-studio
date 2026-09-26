@@ -7,6 +7,7 @@ import {
   type LocationKey,
   type Niche,
 } from "@/lib/catalog";
+import { sendLeadNotification } from "@/lib/email";
 import { calculateEstimate } from "@/lib/pricing";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -14,6 +15,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const AU_PHONE_RE = /^(?:\+?61|0)[2-478]\d{8}$/;
 
 type Body = Record<string, unknown>;
+
+// Launch offer applications received since this server instance started. In-memory only,
+// so it resets on restart/redeploy and is not shared across serverless instances.
+let launchApplicationCount = 0;
 
 const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
@@ -94,6 +99,20 @@ export async function POST(req: Request) {
 
   // TODO: persist to Supabase `inquiries` table once credentials are configured.
   console.info("[inquire] new inquiry", inquiry.reference, inquiry.niche, inquiry.estimate.total);
+
+  const launchApplicationNumber = isLaunch ? ++launchApplicationCount : undefined;
+  if (isLaunch) {
+    console.info(`[inquire] [LAUNCH OFFER APPLICANT] #${launchApplicationNumber}`, reference);
+  }
+
+  // Email failures must never fail the booking, so the lead is logged in full instead.
+  const notification = await sendLeadNotification({ ...inquiry, launchApplicationNumber });
+  if (notification.sent) {
+    console.info("[inquire] notification sent", reference, notification.id);
+  } else {
+    console.warn("[inquire] notification not sent:", notification.reason);
+    console.info("[inquire] lead details", JSON.stringify({ ...inquiry, launchApplicationNumber }));
+  }
 
   return NextResponse.json(
     {
