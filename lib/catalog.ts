@@ -30,6 +30,8 @@ export const NICHES = {
       "Interior & exterior HDR stills",
       "2–3 aerial drone video cutaways",
       "Agent talking-head reel",
+      "Professional 2D Floor Plan with Room Dimensions & Total Area",
+      "Interactive Virtual Tour / 3D Walkthrough ready",
     ],
   },
   sports: {
@@ -62,6 +64,13 @@ export const NICHE_KEYS = Object.keys(NICHES) as Niche[];
 export const LAUNCH_NICHE = "launch" satisfies Niche;
 // Hash the launch CTA links to. The inquiry form pre-selects the launch session when it sees it.
 export const LAUNCH_APPLY_HASH = "#apply-launch-initiative";
+
+// Real estate only add-on, offered on top of drone / rush / extra hours.
+export const FLOOR_PLAN_ADD_ON = {
+  niche: "real-estate" satisfies Niche,
+  label: "Schematic 2D Floor Plan",
+  hint: "Simplified layout drawing for brochures and portals",
+} as const;
 
 export const LOCATIONS = {
   cbd: { label: "Adelaide CBD", scope: "Metro" },

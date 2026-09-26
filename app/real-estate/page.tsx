@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clapperboard, Home, Plane } from "lucide-react";
+import { Clapperboard, Home, Plane, Ruler } from "lucide-react";
 import { VerticalPage } from "@/components/vertical-page";
 
 export const metadata: Metadata = {
@@ -17,6 +17,10 @@ export default function RealEstatePage() {
       title="List it with stills, sky and a story, all in one visit."
       intro="Our intro Listing Package gives Adelaide agents everything a campaign needs from a single booking: bright HDR photography, aerial cutaways and a short reel with you on camera."
       priceNote="Intro Listing Package, quoted per property"
+      callout={{
+        icon: Ruler,
+        text: "Accurate, Council-Ready 2D Floor Plans delivered in 24 hours alongside HDR stills.",
+      }}
       highlights={[
         {
           icon: Home,

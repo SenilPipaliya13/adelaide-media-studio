@@ -12,6 +12,8 @@ export interface VerticalPageProps {
   highlights: { icon: LucideIcon; title: string; body: string }[];
   locations: string[];
   priceNote?: string;
+  // Featured selling point shown as a bullet under the hero CTA.
+  callout?: { icon: LucideIcon; text: string };
 }
 
 export function VerticalPage({
@@ -22,6 +24,7 @@ export function VerticalPage({
   highlights,
   locations,
   priceNote,
+  callout,
 }: VerticalPageProps) {
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -54,6 +57,12 @@ export function VerticalPage({
               {priceNote ?? "Bespoke proposals, quoted to your brief"}
             </p>
           </div>
+          {callout && (
+            <p className="mt-8 flex max-w-2xl items-start gap-3 rounded-lg border border-copper/40 bg-copper/10 px-4 py-3 text-sm text-ivory">
+              <callout.icon className="mt-0.5 h-5 w-5 shrink-0 text-copper" />
+              {callout.text}
+            </p>
+          )}
         </div>
       </section>
 

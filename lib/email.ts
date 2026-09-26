@@ -11,7 +11,7 @@ export type LeadNotification = {
   niche: Niche;
   location: string | null;
   locationKey: LocationKey | null;
-  addOns: { drone: boolean; rush: boolean; extraHours: number };
+  addOns: { drone: boolean; rush: boolean; floorPlan: boolean; extraHours: number };
   name: string;
   email: string;
   phone: string;
@@ -49,6 +49,7 @@ function scopeItems(lead: LeadNotification) {
   if (lead.niche === LAUNCH_NICHE) return items;
   if (lead.addOns.drone) items.push("Add-on: drone coverage");
   if (lead.addOns.rush) items.push("Add-on: 24-hour turnaround");
+  if (lead.addOns.floorPlan) items.push("Add-on: schematic 2D floor plan");
   if (lead.addOns.extraHours > 0) {
     items.push(`Add-on: ${lead.addOns.extraHours} extra hour${lead.addOns.extraHours === 1 ? "" : "s"}`);
   }

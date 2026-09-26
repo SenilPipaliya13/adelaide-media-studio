@@ -24,6 +24,8 @@ const TRAVEL: Record<LocationKey, number> = {
 const ADD_ONS = {
   drone: 250,
   rush: 150,
+  // Placeholder: no floor plan rate confirmed yet.
+  floorPlan: 0,
 } as const;
 
 export interface EstimateInput {
@@ -31,6 +33,7 @@ export interface EstimateInput {
   location?: LocationKey | null;
   drone: boolean;
   rush: boolean;
+  floorPlan?: boolean;
   extraHours: number;
 }
 
@@ -63,6 +66,10 @@ export function calculateEstimate(input: EstimateInput): Estimate {
 
   if (input.rush) {
     lines.push({ label: "Fast 24-hr turnaround", amount: ADD_ONS.rush });
+  }
+
+  if (input.floorPlan) {
+    lines.push({ label: "Schematic 2D Floor Plan", amount: ADD_ONS.floorPlan });
   }
 
   const hours = Math.max(0, Math.min(MAX_EXTRA_HOURS, Math.floor(input.extraHours)));

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  FLOOR_PLAN_ADD_ON,
   LAUNCH_NICHE,
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
@@ -47,6 +48,8 @@ export async function POST(req: Request) {
   const addOns = (isLaunch ? {} : body.addOns ?? {}) as Body;
   const drone = addOns.drone === true;
   const rush = addOns.rush === true;
+  // Floor plans are only offered with the real estate package.
+  const floorPlan = niche === FLOOR_PLAN_ADD_ON.niche && addOns.floorPlan === true;
   const extraHours = Number(addOns.extraHours ?? 0);
   if (!Number.isInteger(extraHours) || extraHours < 0 || extraHours > MAX_EXTRA_HOURS) {
     fields.extraHours = `Extra hours must be between 0 and ${MAX_EXTRA_HOURS}.`;
@@ -79,7 +82,7 @@ export async function POST(req: Request) {
   }
 
   // Internal floor cost for the studio only. It is logged and stored, never returned to the client.
-  const estimate = calculateEstimate({ niche, location: locationKey, drone, rush, extraHours });
+  const estimate = calculateEstimate({ niche, location: locationKey, drone, rush, floorPlan, extraHours });
   const reference = `SPM-${Date.now().toString(36).toUpperCase()}`;
 
   const inquiry = {
@@ -87,7 +90,7 @@ export async function POST(req: Request) {
     niche,
     location: location || null,
     locationKey,
-    addOns: { drone, rush, extraHours },
+    addOns: { drone, rush, floorPlan, extraHours },
     name,
     email,
     phone,

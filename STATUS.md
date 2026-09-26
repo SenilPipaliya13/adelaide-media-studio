@@ -1,5 +1,35 @@
 # STATUS — SP Media Co.
 
+## Floor Plan Deliverables (Real Estate)
+**Status:** ✅ Complete · 2026-09-26 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. The vertical pages went from 109 kB to 110 kB First Load JS. Everything else is unchanged (`/` 183 B / 113 kB, shared JS 103 kB).
+
+### Changes
+| File | Change |
+|---|---|
+| `lib/catalog.ts` | Two new real estate deliverables: "Professional 2D Floor Plan with Room Dimensions & Total Area" and "Interactive Virtual Tour / 3D Walkthrough ready". New `FLOOR_PLAN_ADD_ON` export ("Schematic 2D Floor Plan", real estate only). |
+| `components/inquiry-form.tsx` | Shows a "Schematic 2D Floor Plan" toggle in Add-ons when Real Estate is selected, and lists it in the Estimated Scope Summary. `addOns.floorPlan` is sent as false for other niches and for the launch session. |
+| `app/api/inquire/route.ts` | Accepts `addOns.floorPlan`, but only for `real-estate`. It is ignored for other niches. Stored on the inquiry record and passed to the estimate. |
+| `lib/pricing.ts` | New `floorPlan` add-on line. The rate is a **placeholder of 0**, because no floor plan price has been set. |
+| `lib/email.ts` | Lead emails list "Add-on: schematic 2D floor plan" when it is selected. |
+| `components/vertical-page.tsx` | New optional `callout` prop that renders a copper-bordered highlight bullet under the hero CTA. |
+| `app/real-estate/page.tsx` | Uses the callout (Ruler icon) for "Accurate, Council-Ready 2D Floor Plans delivered in 24 hours alongside HDR stills." |
+
+### Verification
+- The prerendered `/real-estate` HTML contains the callout sentence and both new deliverables.
+- No pricing constants (`hourlyRate`) appear in `.next/static` client chunks.
+- The add-on toggle and the API path were not exercised in a browser or with a live POST during this run.
+
+### Notes
+- The package now includes a professional 2D floor plan, and a schematic 2D floor plan is also offered as a paid add-on, as TASK.md asked. Check that the difference between the two is clear to clients, or adjust the add-on wording.
+- The "24 hours" in the callout is a delivery promise on the public page. Make sure the floor plan workflow can meet it.
+
+### Active backlog
+- Set a real price for the Schematic 2D Floor Plan add-on in `lib/pricing.ts` (currently 0).
+- All items from the previous milestone's backlog below are still open.
+
 ## Agentic Multi-Agent Protocol & Project Memory
 **Status:** ✅ Complete · 2026-09-26 (ACST)
 

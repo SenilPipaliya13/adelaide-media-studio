@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Loader2, MapPin, MessageCircle, Minus, Phone, Plus, Send, Sparkles } from "lucide-react";
 import {
+  FLOOR_PLAN_ADD_ON,
   LAUNCH_APPLY_HASH,
   LAUNCH_NICHE,
   LOCATIONS,
@@ -30,6 +31,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
   const [drone, setDrone] = useState(defaultNiche === "real-estate");
   const [rush, setRush] = useState(false);
   const [extraHours, setExtraHours] = useState(0);
+  const [floorPlan, setFloorPlan] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -55,6 +57,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
 
   const pkg = NICHES[niche];
   const isLaunch = niche === LAUNCH_NICHE;
+  const offersFloorPlan = niche === FLOOR_PLAN_ADD_ON.niche;
   const trimmedLocation = locationText.trim();
   const locationScope = locationKey
     ? `${LOCATIONS[locationKey].label} · ${LOCATIONS[locationKey].scope}`
@@ -66,6 +69,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
     : [
         drone && (niche === "real-estate" ? "Aerial drone video (in package)" : "Aerial drone video"),
         rush && "Fast 24-hr turnaround",
+        offersFloorPlan && floorPlan && FLOOR_PLAN_ADD_ON.label,
         extraHours > 0 && `${extraHours} extra hour${extraHours === 1 ? "" : "s"} of coverage`,
       ].filter((a): a is string => Boolean(a));
 
@@ -87,7 +91,9 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
           niche,
           location: locationText,
           locationKey,
-          addOns: isLaunch ? { drone: false, rush: false, extraHours: 0 } : { drone, rush, extraHours },
+          addOns: isLaunch
+            ? { drone: false, rush: false, extraHours: 0, floorPlan: false }
+            : { drone, rush, extraHours, floorPlan: offersFloorPlan && floorPlan },
           name,
           email,
           phone,
@@ -218,6 +224,14 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
               checked={rush}
               onChange={setRush}
             />
+            {offersFloorPlan && (
+              <Toggle
+                label={FLOOR_PLAN_ADD_ON.label}
+                hint={FLOOR_PLAN_ADD_ON.hint}
+                checked={floorPlan}
+                onChange={setFloorPlan}
+              />
+            )}
             <div className="flex items-center justify-between rounded-md border border-slate-600/60 px-4 py-3">
               <div>
                 <p className="text-sm text-ivory">Extra hours</p>
