@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  LAUNCH_NICHE,
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
   NICHE_KEYS,
@@ -36,7 +37,9 @@ export async function POST(req: Request) {
     : null;
   const location = str(body.location);
 
-  const addOns = (body.addOns ?? {}) as Body;
+  // The complimentary launch session is a fixed 45-minute shoot, so add-ons are ignored.
+  const isLaunch = niche === LAUNCH_NICHE;
+  const addOns = (isLaunch ? {} : body.addOns ?? {}) as Body;
   const drone = addOns.drone === true;
   const rush = addOns.rush === true;
   const extraHours = Number(addOns.extraHours ?? 0);
@@ -96,7 +99,9 @@ export async function POST(req: Request) {
     {
       ok: true,
       reference,
-      message: "Thank you. We will review your brief and send a bespoke proposal within 24 hours.",
+      message: isLaunch
+        ? "Thank you for applying to the Adelaide Launch Initiative. We will review your application and reply within 24 hours."
+        : "Thank you. We will review your brief and send a bespoke proposal within 24 hours.",
     },
     { status: 201 },
   );

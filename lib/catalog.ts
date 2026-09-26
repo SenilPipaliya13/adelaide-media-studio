@@ -42,10 +42,26 @@ export const NICHES = {
       "Edited gallery ready for club socials",
     ],
   },
+  launch: {
+    label: "Adelaide Launch Initiative (Complimentary Session)",
+    includedHours: 0.75,
+    summary:
+      "Complimentary 45-minute hero brand session for 5 Adelaide founders, businesses or real estate specialists. In return we ask for a verified Google review and permission to feature the imagery in our launch portfolio.",
+    deliverables: [
+      "45-minute hero brand session",
+      "5 master high-res commercial stills, shot full-frame on the Canon EOS R6 Mark III",
+      "Commercial usage release",
+    ],
+  },
 } as const;
 
 export type Niche = keyof typeof NICHES;
 export const NICHE_KEYS = Object.keys(NICHES) as Niche[];
+
+// Complimentary launch campaign. Selected by application, so it has no add-ons or price.
+export const LAUNCH_NICHE = "launch" satisfies Niche;
+// Hash the launch CTA links to. The inquiry form pre-selects the launch session when it sees it.
+export const LAUNCH_APPLY_HASH = "#apply-launch-initiative";
 
 export const LOCATIONS = {
   cbd: { label: "Adelaide CBD", scope: "Metro" },

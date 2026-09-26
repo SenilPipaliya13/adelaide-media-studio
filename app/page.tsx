@@ -1,6 +1,31 @@
 import Link from "next/link";
-import { ArrowRight, Aperture, Film, Gauge, Heart, Home, Briefcase, Trophy } from "lucide-react";
+import {
+  ArrowRight,
+  Aperture,
+  Briefcase,
+  Camera,
+  Film,
+  Gauge,
+  Heart,
+  Home,
+  Sparkles,
+  Star,
+  Trophy,
+} from "lucide-react";
 import { InquiryForm } from "@/components/inquiry-form";
+import { LAUNCH_APPLY_HASH } from "@/lib/catalog";
+
+const LAUNCH_OFFER = {
+  get: [
+    "Complimentary 45-minute hero brand session",
+    "5 master high-res commercial stills, shot on full-frame Canon EOS R6 Mark III glass",
+    "Commercial usage release",
+  ],
+  ask: [
+    "A verified Google review",
+    "Permission to feature the imagery in our launch portfolio",
+  ],
+};
 
 const VERTICALS = [
   {
@@ -42,6 +67,18 @@ const GEAR = [
 export default function HomePage() {
   return (
     <>
+      <a
+        href={LAUNCH_APPLY_HASH}
+        className="block border-b border-copper/30 bg-copper/10 px-6 py-3 text-center text-sm text-ivory transition hover:bg-copper/20"
+      >
+        <Sparkles className="mr-2 inline h-4 w-4 align-[-2px] text-copper" />
+        <span className="font-medium">Adelaide Launch Initiative:</span> 5 complimentary commercial
+        sessions for local founders.{" "}
+        <span className="whitespace-nowrap text-copper-light underline underline-offset-4">
+          Apply now
+        </span>
+      </a>
+
       <section className="relative overflow-hidden border-b border-slate-800">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(192,138,91,0.15),transparent_60%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-28 md:py-40">
@@ -67,6 +104,50 @@ export default function HomePage() {
               className="rounded-md border border-slate-600 px-6 py-3 text-sm text-ivory transition hover:border-ivory"
             >
               What we shoot
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="launch-initiative" className="mx-auto max-w-6xl scroll-mt-24 px-6 pt-24">
+        <div className="relative overflow-hidden rounded-2xl border border-copper/40 bg-obsidian-900 p-8 md:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(192,138,91,0.12),transparent_60%)]" />
+          <div className="relative">
+            <p className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-copper">
+              <Sparkles className="h-4 w-4" /> Limited to 5 places
+            </p>
+            <h2 className="mt-4 max-w-3xl font-serif text-3xl text-ivory md:text-4xl">
+              Adelaide Launch Initiative: 5 Complimentary Commercial Sessions
+            </h2>
+            <p className="mt-4 max-w-3xl text-slate-300">
+              To celebrate our Adelaide launch, SP Media Co. is partnering with 5 local founders,
+              businesses, or real estate specialists for a complimentary 45-minute hero brand session.
+            </p>
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              <div className="rounded-xl border border-slate-800 bg-obsidian-950 p-6">
+                <Camera className="h-5 w-5 text-copper" />
+                <h3 className="mt-4 font-serif text-xl text-ivory">What you get</h3>
+                <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                  {LAUNCH_OFFER.get.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-obsidian-950 p-6">
+                <Star className="h-5 w-5 text-copper" />
+                <h3 className="mt-4 font-serif text-xl text-ivory">What we ask</h3>
+                <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                  {LAUNCH_OFFER.ask.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <a
+              href={LAUNCH_APPLY_HASH}
+              className="mt-8 inline-flex items-center gap-2 rounded-md bg-copper px-6 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
+            >
+              Apply for the Launch Initiative <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </div>

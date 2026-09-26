@@ -1,5 +1,47 @@
 # STATUS — SP Media Co.
 
+## ABN Display & Adelaide Launch Initiative
+**Status:** ✅ Complete · 2026-09-26 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. `npm run lint` is also clean.
+
+```
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      183 B         113 kB
+├ ○ /_not-found                            996 B         104 kB
+├ ƒ /api/inquire                           123 B         103 kB
+├ ○ /commercial                            179 B         109 kB
+├ ○ /real-estate                           179 B         109 kB
+├ ○ /sports                                179 B         109 kB
+└ ○ /weddings                              179 B         109 kB
++ First Load JS shared by all             103 kB
+```
+
+### Changes
+| File | Change |
+|---|---|
+| `lib/seo.ts` | New `ABN` constant (`"46 478 326 745"`). LocalBusiness schema now has `identifier: { "@type": "PropertyValue", propertyID: "ABN", value: "46478326745" }`. |
+| `components/site-footer.tsx` | Legal line now reads "SP Media Co. · ABN 46 478 326 745 · Adelaide, South Australia", using the shared `ABN` constant. |
+| `lib/catalog.ts` | New `launch` niche, labelled "Adelaide Launch Initiative (Complimentary Session)", with deliverables: 45-minute hero brand session, 5 master high-res stills on the R6 Mark III, and a commercial release. Also exports `LAUNCH_NICHE` and `LAUNCH_APPLY_HASH` (`#apply-launch-initiative`). |
+| `lib/pricing.ts` | `launch` rate is base $0 / hourly $0. Travel still counts toward the internal floor cost. |
+| `app/page.tsx` | Adds a full-width announcement banner above the hero and a `#launch-initiative` card section after it. The section has the title, tagline, "What you get" and "What we ask" cards, and an "Apply for the Launch Initiative" CTA. Both the banner and the CTA link to `LAUNCH_APPLY_HASH`. |
+| `components/inquiry-form.tsx` | The launch session appears as a full-width option in the service picker. When it is selected, add-ons are hidden and sent as off, the summary shows **Total estimated price: $0 (Selected by Application)** and the "What we ask" terms, the submit button reads **"Apply for Complimentary Session"**, and the success screen reads "Application received". On mount and on `hashchange`, the form checks for `#apply-launch-initiative`. If it finds it, it pre-selects the launch session, scrolls to the form and resets the hash to `#inquire`, so the CTA still works if clicked again. |
+| `app/api/inquire/route.ts` | Accepts `niche: "launch"`. Add-ons are ignored for launch applications even when the client sends them, and launch applications get their own confirmation message. |
+
+### Verification (`next start`)
+- The homepage HTML contains the campaign title, the `#apply-launch-initiative` links, the new picker option, the footer legal line and the ABN `identifier` in the JSON-LD.
+- A launch application sent with drone, rush and 3 extra hours returned 201 with the launch message. The server logged a floor total of 0, so the add-ons were ignored.
+- A commercial inquiry still returned 201 with the standard message. The server logged 650.
+- The hash pre-select and scroll are client-side and were **not** exercised in a real browser. Check this manually before launch.
+
+### Notes
+- TASK.md is titled "…& Lead Notification Setup", but its steps contain no notification instructions, so **no lead notification was built**. The inquiries API still only logs to the console. Email/Supabase notification is still an open gap (see Phase 1 "Known gaps").
+- The `$0 (Selected by Application)` label is an intentional exception to the no-public-prices rule from the previous milestone.
+- Nothing limits the campaign to 5 places. Applications are reviewed manually, so the banner and section should be removed once the places are filled.
+
+---
+
 ## Bespoke Proposal & Custom Quote Model (no public prices)
 **Status:** ✅ Complete · 2026-09-26 (ACST)
 

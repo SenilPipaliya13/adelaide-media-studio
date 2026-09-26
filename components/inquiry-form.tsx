@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Loader2, MapPin, MessageCircle, Minus, Phone, Plus, Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, Loader2, MapPin, MessageCircle, Minus, Phone, Plus, Send, Sparkles } from "lucide-react";
 import {
+  LAUNCH_APPLY_HASH,
+  LAUNCH_NICHE,
   LOCATIONS,
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
@@ -34,19 +36,38 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
   const [date, setDate] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>({ state: "idle" });
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // The launch campaign CTA links to LAUNCH_APPLY_HASH: pre-select the complimentary
+  // session and scroll to the form.
+  useEffect(() => {
+    function applyFromHash() {
+      if (window.location.hash !== LAUNCH_APPLY_HASH) return;
+      setNiche(LAUNCH_NICHE);
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Swap the hash back so a second click on the CTA fires hashchange again.
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}#inquire`);
+    }
+    applyFromHash();
+    window.addEventListener("hashchange", applyFromHash);
+    return () => window.removeEventListener("hashchange", applyFromHash);
+  }, []);
 
   const pkg = NICHES[niche];
+  const isLaunch = niche === LAUNCH_NICHE;
   const trimmedLocation = locationText.trim();
   const locationScope = locationKey
     ? `${LOCATIONS[locationKey].label} · ${LOCATIONS[locationKey].scope}`
     : trimmedLocation
       ? `${trimmedLocation} · Travel scope confirmed in proposal`
       : null;
-  const activeAddOns = [
-    drone && (niche === "real-estate" ? "Aerial drone video (in package)" : "Aerial drone video"),
-    rush && "Fast 24-hr turnaround",
-    extraHours > 0 && `${extraHours} extra hour${extraHours === 1 ? "" : "s"} of coverage`,
-  ].filter((a): a is string => Boolean(a));
+  const activeAddOns = isLaunch
+    ? []
+    : [
+        drone && (niche === "real-estate" ? "Aerial drone video (in package)" : "Aerial drone video"),
+        rush && "Fast 24-hr turnaround",
+        extraHours > 0 && `${extraHours} extra hour${extraHours === 1 ? "" : "s"} of coverage`,
+      ].filter((a): a is string => Boolean(a));
 
   const fieldErrors = status.state === "error" ? status.fields ?? {} : {};
 
@@ -66,7 +87,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
           niche,
           location: locationText,
           locationKey,
-          addOns: { drone, rush, extraHours },
+          addOns: isLaunch ? { drone: false, rush: false, extraHours: 0 } : { drone, rush, extraHours },
           name,
           email,
           phone,
@@ -93,7 +114,9 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
     return (
       <div className="rounded-xl border border-copper/40 bg-obsidian-800 p-8 text-center">
         <Check className="mx-auto mb-4 h-10 w-10 text-copper" />
-        <h3 className="font-serif text-2xl text-ivory">Brief received</h3>
+        <h3 className="font-serif text-2xl text-ivory">
+          {isLaunch ? "Application received" : "Brief received"}
+        </h3>
         <p className="mt-2 text-slate-300">{status.message}</p>
         <p className="mt-4 text-xs uppercase tracking-widest text-slate-400">
           Reference {status.reference}
@@ -105,8 +128,9 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
   return (
     <>
       <form
+        ref={formRef}
         onSubmit={onSubmit}
-        className="grid gap-8 rounded-xl border border-slate-700/60 bg-obsidian-800 p-6 md:grid-cols-[1fr_320px] md:p-8"
+        className="grid scroll-mt-28 gap-8 rounded-xl border border-slate-700/60 bg-obsidian-800 p-6 md:grid-cols-[1fr_320px] md:p-8"
         noValidate
       >
         <div className="space-y-6">
@@ -123,11 +147,14 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                   onClick={() => setNiche(key)}
                   aria-pressed={niche === key}
                   className={`rounded-md border px-3 py-2 text-sm transition ${
+                    key === LAUNCH_NICHE ? "col-span-full inline-flex items-center justify-center gap-2" : ""
+                  } ${
                     niche === key
                       ? "border-copper bg-copper/10 text-ivory"
                       : "border-slate-600/60 text-slate-300 hover:border-slate-400"
                   }`}
                 >
+                  {key === LAUNCH_NICHE && <Sparkles className="h-4 w-4 text-copper" />}
                   {NICHES[key].label}
                 </button>
               ))}
@@ -174,8 +201,8 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
             </div>
           </div>
 
-          {/* Add-ons */}
-          <fieldset className="space-y-3">
+          {/* Add-ons (the complimentary launch session is fixed scope) */}
+          <fieldset className="space-y-3" hidden={isLaunch}>
             <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
               Add-ons
             </legend>
@@ -313,13 +340,23 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-1 text-slate-400">None selected</p>
+                  <p className="mt-1 text-slate-400">
+                    {isLaunch ? "Not available for this session" : "None selected"}
+                  </p>
                 )}
               </dd>
             </div>
+            {isLaunch && (
+              <div>
+                <dt className="text-xs uppercase tracking-widest text-slate-400">Total estimated price</dt>
+                <dd className="mt-1 font-serif text-xl text-ivory">$0 (Selected by Application)</dd>
+              </div>
+            )}
           </dl>
           <p className="mt-4 text-xs text-slate-400">
-            Every shoot is quoted individually. We&apos;ll reply with a bespoke proposal.
+            {isLaunch
+              ? "In return we ask for a verified Google review and permission to feature the imagery in our launch portfolio."
+              : "Every shoot is quoted individually. We'll reply with a bespoke proposal."}
           </p>
           <button
             type="submit"
@@ -331,7 +368,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
             ) : (
               <Send className="h-4 w-4" />
             )}
-            Request Tailored Quote
+            {isLaunch ? "Apply for Complimentary Session" : "Request Tailored Quote"}
           </button>
           {status.state === "error" && (
             <p role="alert" className="mt-3 text-sm text-red-400">

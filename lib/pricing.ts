@@ -8,6 +8,8 @@ const NICHE_RATES: Record<Niche, { base: number; hourlyRate: number }> = {
   commercial: { base: 650, hourlyRate: 200 },
   "real-estate": { base: 350, hourlyRate: 150 },
   sports: { base: 550, hourlyRate: 180 },
+  // Complimentary launch session, selected by application.
+  launch: { base: 0, hourlyRate: 0 },
 };
 
 const TRAVEL: Record<LocationKey, number> = {

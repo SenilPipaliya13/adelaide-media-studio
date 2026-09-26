@@ -1,5 +1,6 @@
 export const SITE_URL = "https://spmediaco.com.au";
 export const BUSINESS_NAME = "SP Media Co.";
+export const ABN = "46 478 326 745";
 
 export const localBusinessSchema = {
   "@context": "https://schema.org",
@@ -7,6 +8,12 @@ export const localBusinessSchema = {
   "@id": `${SITE_URL}/#business`,
   name: BUSINESS_NAME,
   url: SITE_URL,
+  identifier: {
+    "@type": "PropertyValue",
+    propertyID: "ABN",
+    name: "Australian Business Number",
+    value: ABN.replace(/\s/g, ""),
+  },
   description:
     "Adelaide photography and video studio covering weddings, commercial, real estate and sports.",
   areaServed: {
