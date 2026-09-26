@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/*
+ * SP Media Co. editorial palette
+ * obsidian — deep near-black backgrounds
+ * slate    — Tailwind's built-in slate scale for secondary text & borders
+ * ivory    — warm off-white for primary text
+ * copper   — muted copper/gold accent, used sparingly
+ */
+@theme {
+  --color-obsidian-700: #2a2a2e;
+  --color-obsidian-800: #1a1a1d;
+  --color-obsidian-900: #121214;
+  --color-obsidian-950: #0b0b0c;
+
+  --color-ivory: #f5f1ea;
+  --color-ivory-muted: #e8e2d6;
+
+  --color-copper: #c08a5b;
+  --color-copper-light: #d6a877;
+  --color-copper-dark: #9a6b43;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-obsidian-950);
+  color: var(--color-ivory);
+}
+
+::selection {
+  background: var(--color-copper);
+  color: var(--color-obsidian-950);
+}
