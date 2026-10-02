@@ -2,55 +2,27 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Briefcase,
-  Check,
-  Home,
-  Loader2,
-  Mail,
-  MessageCircle,
-  PartyPopper,
-  Phone,
-  Send,
-  Sparkles,
-  User,
-  X,
-} from "lucide-react";
+import { ArrowRight, Check, Loader2, Mail, MapPin, Send } from "lucide-react";
 import { SuburbCombobox } from "@/components/suburb-combobox";
-import {
-  HUB_SERVICES,
-  HUB_SERVICE_KEYS,
-  LAUNCH_APPLY_HASH,
-  LAUNCH_NICHE,
-  NICHES,
-  type HubService,
-} from "@/lib/catalog";
-import { STUDIO_EMAIL, STUDIO_PHONE, STUDIO_TEL_HREF, STUDIO_WHATSAPP_HREF } from "@/lib/contact";
+import { HUB_SERVICES, HUB_SERVICE_KEYS, LAUNCH_APPLY_HASH, type HubService } from "@/lib/catalog";
+import { STUDIO_EMAIL } from "@/lib/contact";
 import type { Suburb } from "@/lib/sa-suburbs";
 
 const TABS = [
   { key: "services", label: "Our Services" },
-  { key: "book", label: "Book a Session" },
-  { key: "contact", label: "Contact" },
+  { key: "contact", label: "Contact Us" },
+  { key: "book", label: "Book Us" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
 
-// The old "#inquire" anchor (existing links and bookmarks) opens the booking tab.
+// Older links (#inquire, the retired launch banner hash) still land on the booking tab.
 const HASH_TO_TAB: Record<string, TabKey> = {
   "#services": "services",
+  "#contact": "contact",
   "#book": "book",
   "#inquire": "book",
-  "#contact": "contact",
   [LAUNCH_APPLY_HASH]: "book",
-};
-
-const SERVICE_ICONS: Record<HubService, typeof Briefcase> = {
-  commercial: Briefcase,
-  "real-estate": Home,
-  celebrations: PartyPopper,
-  portraits: User,
 };
 
 const inputClass =
@@ -59,23 +31,15 @@ const inputClass =
 export function WireframeHub() {
   const id = useId();
   const [tab, setTab] = useState<TabKey>("services");
-  const [interest, setInterest] = useState<HubService | null>(null);
-  const [launch, setLaunch] = useState(false);
   const hubRef = useRef<HTMLElement>(null);
-  const tabRefs = useRef<Record<TabKey, HTMLButtonElement | null>>({ services: null, book: null, contact: null });
+  const tabRefs = useRef<Record<TabKey, HTMLButtonElement | null>>({ services: null, contact: null, book: null });
 
-  // Deep links (#book, #contact, the launch CTA hash) open the matching tab.
+  // Deep links (#services, #contact, #book) open the matching tab.
   useEffect(() => {
     function applyHash() {
-      const hash = window.location.hash;
-      const target = HASH_TO_TAB[hash];
+      const target = HASH_TO_TAB[window.location.hash];
       if (!target) return;
       setTab(target);
-      if (hash === LAUNCH_APPLY_HASH) {
-        setLaunch(true);
-        // Swap the hash so a second click on the launch CTA fires hashchange again.
-        history.replaceState(null, "", `${window.location.pathname}${window.location.search}#book`);
-      }
       hubRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     applyHash();
@@ -101,20 +65,9 @@ export function WireframeHub() {
     openTab(TABS[next].key, true);
   }
 
-  function bookService(key: HubService) {
-    setInterest(key);
-    setLaunch(false);
-    openTab("book");
-    hubRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
-    <section id="studio" ref={hubRef} className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
-      <div
-        role="tablist"
-        aria-label="Studio hub"
-        className="mx-auto flex w-full max-w-xl rounded-full border border-slate-700/60 bg-obsidian-900 p-1"
-      >
+    <section id="studio" ref={hubRef} className="mx-auto max-w-4xl scroll-mt-24 px-6 pb-24">
+      <div role="tablist" aria-label="Studio" className="flex flex-wrap justify-center gap-3">
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -129,8 +82,10 @@ export function WireframeHub() {
             tabIndex={tab === t.key ? 0 : -1}
             onClick={() => openTab(t.key)}
             onKeyDown={onTabKeyDown}
-            className={`flex-1 rounded-full px-3 py-2.5 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-copper ${
-              tab === t.key ? "bg-copper text-obsidian-950" : "text-slate-300 hover:text-ivory"
+            className={`min-w-36 rounded-md border px-5 py-2.5 text-sm tracking-wide transition focus:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian-925 ${
+              tab === t.key
+                ? "border-copper bg-copper/15 text-copper-light"
+                : "border-slate-700/70 text-slate-300 hover:border-slate-500 hover:text-ivory"
             }`}
           >
             {t.label}
@@ -148,53 +103,85 @@ export function WireframeHub() {
           tabIndex={0}
           className="mt-12 focus:outline-none"
         >
-          {t.key === "services" && <ServicesPanel onBook={bookService} />}
-          {t.key === "book" && (
-            <BookPanel
-              interest={interest}
-              onClearInterest={() => setInterest(null)}
-              launch={launch}
-              onClearLaunch={() => setLaunch(false)}
-            />
-          )}
-          {t.key === "contact" && <ContactPanel />}
+          {t.key === "services" && <ServicesPanel />}
+          {t.key === "contact" && <ContactPanel onInquire={() => openTab("book")} />}
+          {t.key === "book" && <BookPanel />}
         </div>
       ))}
     </section>
   );
 }
 
-function ServicesPanel({ onBook }: { onBook: (key: HubService) => void }) {
+function ServicesPanel() {
   return (
-    <div className="grid gap-6 sm:grid-cols-2">
-      {HUB_SERVICE_KEYS.map((key) => {
-        const { label, body, href } = HUB_SERVICES[key];
-        const Icon = SERVICE_ICONS[key];
+    <ol className="mx-auto max-w-3xl divide-y divide-slate-800 border-y border-slate-800">
+      {HUB_SERVICE_KEYS.map((key, i) => {
+        const { label, scope, points, href } = HUB_SERVICES[key];
         return (
-          <article
-            key={key}
-            className="group flex flex-col rounded-2xl border border-slate-800 bg-obsidian-900 p-8 transition hover:border-copper/60"
-          >
-            <Icon className="h-6 w-6 text-copper" />
-            <h3 className="mt-5 font-serif text-2xl text-ivory">{label}</h3>
-            <p className="mt-2 flex-1 text-slate-300">{body}</p>
-            <div className="mt-6 flex items-center justify-between gap-4 text-sm">
-              <button
-                type="button"
-                onClick={() => onBook(key)}
-                className="inline-flex items-center gap-1 text-copper transition hover:gap-2"
-              >
-                Book a session <ArrowRight className="h-4 w-4" />
-              </button>
+          <li key={key} className="grid gap-4 py-8 sm:grid-cols-[3rem_1fr]">
+            <span className="font-serif text-2xl text-copper">{String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <h3 className="font-serif text-2xl text-ivory">{label}</h3>
+              <p className="mt-1 text-sm text-slate-400">{scope}</p>
+              <ul className="mt-4 space-y-2 text-slate-300">
+                {points.map((point) => (
+                  <li key={point} className="flex gap-3">
+                    <span aria-hidden className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-copper" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
               {href && (
-                <Link href={href} className="text-slate-400 underline-offset-4 transition hover:text-ivory hover:underline">
-                  See the work
+                <Link
+                  href={href}
+                  className="mt-4 inline-flex items-center gap-1 text-sm text-copper transition hover:gap-2"
+                >
+                  See the work <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
             </div>
-          </article>
+          </li>
         );
       })}
+    </ol>
+  );
+}
+
+function ContactPanel({ onInquire }: { onInquire: () => void }) {
+  return (
+    <div className="mx-auto max-w-xl rounded-2xl border border-slate-800 bg-obsidian-900 p-8 md:p-10">
+      <dl className="space-y-6">
+        <div className="flex gap-4">
+          <Mail aria-hidden className="mt-1 h-5 w-5 shrink-0 text-copper" />
+          <div>
+            <dt className="text-xs uppercase tracking-widest text-slate-400">Studio Email</dt>
+            <dd className="mt-1 break-words font-serif text-xl text-ivory">{STUDIO_EMAIL}</dd>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <MapPin aria-hidden className="mt-1 h-5 w-5 shrink-0 text-copper" />
+          <div>
+            <dt className="text-xs uppercase tracking-widest text-slate-400">Base</dt>
+            <dd className="mt-1 font-serif text-xl text-ivory">Adelaide &amp; Greater South Australia</dd>
+          </div>
+        </div>
+      </dl>
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a
+          href={`mailto:${STUDIO_EMAIL}`}
+          className="flex flex-1 items-center justify-center gap-2 rounded-md bg-copper px-4 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
+        >
+          <Mail className="h-4 w-4" /> Email Us Directly
+        </a>
+        <button
+          type="button"
+          onClick={onInquire}
+          className="flex flex-1 items-center justify-center gap-2 rounded-md border border-copper px-4 py-3 text-sm text-copper transition hover:bg-copper/10"
+        >
+          Send an Inquiry <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+      <p className="mt-6 text-center text-xs text-slate-400">We reply within one business day (ACST).</p>
     </div>
   );
 }
@@ -205,21 +192,12 @@ type Status =
   | { state: "success"; reference: string; message: string }
   | { state: "error"; message: string; fields?: Record<string, string> };
 
-function BookPanel({
-  interest,
-  onClearInterest,
-  launch,
-  onClearLaunch,
-}: {
-  interest: HubService | null;
-  onClearInterest: () => void;
-  launch: boolean;
-  onClearLaunch: () => void;
-}) {
+function BookPanel() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [service, setService] = useState<HubService | "">("");
   const [suburb, setSuburb] = useState<Suburb | null>(null);
   const [story, setStory] = useState("");
   const [status, setStatus] = useState<Status>({ state: "idle" });
@@ -235,8 +213,7 @@ function BookPanel({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           source: "studio-hub",
-          niche: launch ? LAUNCH_NICHE : undefined,
-          interest: launch ? undefined : interest ?? undefined,
+          interest: service || undefined,
           firstName,
           lastName,
           email,
@@ -260,7 +237,7 @@ function BookPanel({
     return (
       <div className="mx-auto max-w-2xl rounded-2xl border border-copper/40 bg-obsidian-900 p-10 text-center">
         <Check className="mx-auto mb-4 h-10 w-10 text-copper" />
-        <h3 className="font-serif text-2xl text-ivory">{launch ? "Application received" : "Story received"}</h3>
+        <h3 className="font-serif text-2xl text-ivory">Inquiry received</h3>
         <p className="mt-2 text-slate-300">{status.message}</p>
         <p className="mt-4 text-xs uppercase tracking-widest text-slate-400">Reference {status.reference}</p>
       </div>
@@ -273,51 +250,17 @@ function BookPanel({
       noValidate
       className="mx-auto max-w-2xl space-y-6 rounded-2xl border border-slate-700/60 bg-obsidian-900 p-6 md:p-10"
     >
-      <div>
-        <h3 className="font-serif text-3xl text-ivory">Book a session</h3>
-        <p className="mt-2 text-slate-300">
-          No packages to decode. Tell us who you are and what you&apos;re hoping to capture, and we&apos;ll
-          shape the session around it.
-        </p>
-      </div>
-
-      {launch ? (
-        <div className="rounded-xl border border-copper/40 bg-copper/5 p-4 text-sm">
-          <div className="flex items-start justify-between gap-3">
-            <p className="inline-flex items-center gap-2 font-medium text-ivory">
-              <Sparkles className="h-4 w-4 text-copper" /> Applying for: {NICHES[LAUNCH_NICHE].label}
-            </p>
-            <button type="button" aria-label="Cancel launch application" onClick={onClearLaunch} className="text-slate-400 hover:text-ivory">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <p className="mt-2 text-slate-300">
-            {NICHES[LAUNCH_NICHE].deliverables.join(" · ")}. In return we ask for a verified Google review and
-            permission to feature the imagery in our launch portfolio.
-          </p>
-        </div>
-      ) : (
-        interest && (
-          <p className="inline-flex items-center gap-2 rounded-full border border-copper/40 bg-copper/10 px-3 py-1 text-xs text-copper-light">
-            Interested in: {HUB_SERVICES[interest].label}
-            <button type="button" aria-label="Clear service" onClick={onClearInterest} className="hover:text-ivory">
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </p>
-        )
-      )}
-
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="First name" error={fieldErrors.firstName}>
+        <Field label="First Name" error={fieldErrors.firstName}>
           <input value={firstName} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" required className={inputClass} />
         </Field>
-        <Field label="Last name" error={fieldErrors.lastName}>
+        <Field label="Last Name" error={fieldErrors.lastName}>
           <input value={lastName} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" required className={inputClass} />
         </Field>
         <Field label="Email" error={fieldErrors.email}>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required className={inputClass} />
         </Field>
-        <Field label="Phone" error={fieldErrors.phone}>
+        <Field label="Phone Number" error={fieldErrors.phone}>
           <input
             type="tel"
             value={phone}
@@ -329,6 +272,21 @@ function BookPanel({
           />
         </Field>
       </div>
+
+      <Field label="Service">
+        <select
+          value={service}
+          onChange={(e) => setService(e.target.value as HubService | "")}
+          className={inputClass}
+        >
+          <option value="">Not sure yet</option>
+          {HUB_SERVICE_KEYS.map((key) => (
+            <option key={key} value={key}>
+              {HUB_SERVICES[key].label}
+            </option>
+          ))}
+        </select>
+      </Field>
 
       <SuburbCombobox value={suburb} onChange={setSuburb} error={fieldErrors.suburb} />
 
@@ -349,7 +307,7 @@ function BookPanel({
         className="flex w-full items-center justify-center gap-2 rounded-md bg-copper px-4 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light disabled:opacity-60"
       >
         {status.state === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-        {launch ? "Apply for Complimentary Session" : "Share my story"}
+        Send Inquiry
       </button>
       {status.state === "error" && (
         <p role="alert" className="text-sm text-red-400">
@@ -357,35 +315,6 @@ function BookPanel({
         </p>
       )}
     </form>
-  );
-}
-
-function ContactPanel() {
-  const items = [
-    { icon: Phone, label: "Call the studio", value: STUDIO_PHONE, href: STUDIO_TEL_HREF, external: false },
-    { icon: MessageCircle, label: "WhatsApp", value: "Message us now", href: STUDIO_WHATSAPP_HREF, external: true },
-    { icon: Mail, label: "Email", value: STUDIO_EMAIL, href: `mailto:${STUDIO_EMAIL}`, external: false },
-  ];
-  return (
-    <div className="mx-auto max-w-4xl">
-      <div className="grid gap-6 md:grid-cols-3">
-        {items.map(({ icon: Icon, label, value, href, external }) => (
-          <a
-            key={label}
-            href={href}
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="rounded-2xl border border-slate-800 bg-obsidian-900 p-8 text-center transition hover:border-copper/60"
-          >
-            <Icon className="mx-auto h-6 w-6 text-copper" />
-            <p className="mt-4 text-xs uppercase tracking-widest text-slate-400">{label}</p>
-            <p className="mt-2 break-words font-serif text-xl text-ivory">{value}</p>
-          </a>
-        ))}
-      </div>
-      <p className="mt-8 text-center text-sm text-slate-400">
-        Based in Adelaide, South Australia. We reply within one business day (ACST).
-      </p>
-    </div>
   );
 }
 

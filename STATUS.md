@@ -1,5 +1,39 @@
 # STATUS — SP Media Co.
 
+## Homepage Replacement: Exact Wireframe Layout
+**Status:** ✅ Complete · 2026-10-02 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. `/` is 9.07 kB / 115 kB First Load JS (ISR, `revalidate = 3600`). Vertical pages are unchanged at 124 B / 110 kB. Shared JS is 103 kB.
+
+### Changes
+| File | Change |
+|---|---|
+| `app/page.tsx` | Fully rewritten. Matte `#0d0d11` background, "SP MEDIA CO." wordmark with "Adelaide, South Australia" beneath it, the "Welcome to SP Media Co." headline, then the daily quote in serif italic with the author cited, then the hub. The launch banner, large hero and marketing paragraph are gone. |
+| `app/globals.css` | New `obsidian-925` token (`#0d0d11`) in `@theme`. |
+| `components/wireframe-hub.tsx` | Rewritten. Tabs are now **Our Services · Contact Us · Book Us**, as three separate buttons: copper border and fill when active, subtle outline when not. **Our Services:** a numbered list of the four pillars, each with a scope line, three bullets covering craft, inclusions and delivery time, and a "See the work" link where a vertical page exists. **Contact Us:** a card with the studio email (`spmediaco7@gmail.com`), the base (Adelaide & Greater South Australia), and two buttons, "Email Us Directly" (`mailto:`) and "Send an Inquiry", which opens Book Us. **Book Us:** First Name, Last Name, Email, Phone Number, a Service dropdown ("Not sure yet" plus the four pillars), the SA suburb combobox with the Metro/Regional badge, the story textarea with the exact wireframe wording, and a "Send Inquiry" button that posts to `/api/inquire`. |
+| `lib/catalog.ts` | `HUB_SERVICES` now holds the four wireframe pillars: `hospitality` (Brand & Hospitality), `real-estate` (Real Estate & Architecture), `celebrations` (Celebrations & Events) and `portraits` (Portraits & Milestones), each with `scope` and `points`. The API's `interest` validation and the email subject pick up the new keys automatically. |
+
+### Verification (`next start`, `RESEND_API_KEY` blanked)
+- Homepage HTML contains the welcome headline, the location line, all three tabs, "Brand & Hospitality", "Email Us Directly" and the studio email. It has no "Launch Initiative" text and no old SaaS headline.
+- Hub inquiry with `interest: "hospitality"` and Glenelg → 201. The log shows `interest: "hospitality"` and `suburb.region: "metro"`.
+- Invalid hub payload → 422 with field errors for suburb, firstName, lastName, email, phone and message.
+- No pricing constants (`hourlyRate`) appear in `.next/static`.
+- **Not tested:** tab switching, the dropdown and the combobox in a real browser.
+
+### Notes
+- **Delivery times in the service bullets need confirming.** TASK.md only gave "24h delivery" for real estate. The others (3–5 business days for brand work, 7 days for events, 5 business days for portraits) are placeholders I wrote in `lib/catalog.ts`.
+- **The homepage no longer has a launch campaign entry point.** TASK.md asked for the launch banner to be removed, and the hub no longer has a launch-application mode. Old `#apply-launch-initiative` links now just open Book Us. The package form on the vertical pages still supports the launch niche.
+- The Contact tab's phone and WhatsApp cards were removed, because the wireframe lists only email and base. `STUDIO_PHONE` (still a placeholder) is no longer used on the site.
+- The shared site header (wordmark, vertical nav and "Book a session" → `/#book`) still shows above the page, so the wordmark appears twice on `/`. If the wireframe should be the only branding, hide the header on the homepage.
+- "Brand & Hospitality" links to `/commercial`. "Portraits & Milestones" has no vertical page.
+
+### Active backlog
+- Confirm the delivery times in the service bullets.
+- Decide whether the launch campaign should come back to the homepage, and whether the site header should be hidden there.
+- Test the tabs, the dropdown and the combobox in a browser (desktop and mobile).
+- All earlier backlog items below are still open.
+
 ## Wireframe Overhaul: Boutique Studio Hub + SA Suburb Autocomplete
 **Status:** ✅ Complete · 2026-10-02 (ACST)
 

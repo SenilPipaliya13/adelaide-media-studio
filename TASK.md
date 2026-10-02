@@ -1,26 +1,41 @@
-# TASK: Wireframe Overhaul - Authentic Boutique Studio + SA Suburb Autocomplete
+# TASK: Complete Homepage Replacement - Exact Wireframe Layout
 
-1. Adelaide Suburbs Engine:
-   - Create `lib/sa-suburbs.ts` containing a dataset of Greater Adelaide & Regional SA suburbs and postcodes (e.g., Adelaide CBD 5000, North Adelaide 5006, Norwood 5067, Glenelg 5045, Unley 5061, Prospect 5082, Bowden 5007, Henley Beach 5022, Barossa 5352, McLaren Vale 5171).
-   - Classify them into "Metro Adelaide (Standard Included)" vs "Regional SA (Custom Travel)".
+CRITICAL: Completely overwrite `app/page.tsx`. Delete all old hero sections, generic SaaS headings ("Photography & video for moments that matter"), launch banners, and generic buttons. Replace the entire page view with the authentic wireframe structure.
 
-2. Dynamic Suburb Autocomplete Component:
-   - Create `components/suburb-combobox.tsx`:
-     * Search-as-you-type input with smooth keyboard navigation.
-     * Displays Suburb Name, Postcode, and Region badge.
-     * On selection, displays a subtle reassurance pill: "Metro Adelaide Service Zone - Travel Included".
+1. Layout & Styling Architecture (`app/page.tsx`):
+   - Background: Deep matte obsidian/charcoal (`#0d0d11`).
+   - Clean minimalist top branding:
+     * Display "SP MEDIA CO." centered or top-left in refined tracking, with "Adelaide, South Australia" subtly beneath.
+   - Welcome & Daily Master Quote:
+     * Headline: "Welcome to SP Media Co."
+     * Daily Photography Quote component (rendered directly beneath welcome, in an elegant serif italic with author citation).
+   - 3-Segment Navigation Switcher:
+     * Three distinct clickable tab buttons centered on screen:
+       [ Our Services ]   [ Contact Us ]   [ Book Us ]
+     * Active tab is highlighted with a warm copper accent border/fill; inactive tabs remain subtle minimal outline.
 
-3. Homepage Redesign (`app/page.tsx` & `components/wireframe-hub.tsx`):
-   - Header: Elegant branding for SP Media Co.
-   - Daily Photography Quote: Serendipitous rotating master quote (Ansel Adams, Dorothea Lange, Cartier-Bresson) that changes with the calendar day.
-   - Clean 3-Tab Studio Hub:
-     * Tab 1: [ Our Services ] -> Visual cards for Commercial, Real Estate, Celebrations & Events, and Portraits.
-     * Tab 2: [ Book a Session ] -> Human story form with First/Last Name, Email, Phone, the Suburb Autocomplete, and the custom textarea: "Tell us about your story — we will convert it into photography."
-     * Tab 3: [ Contact ] -> Direct Adelaide phone, WhatsApp quick-link, and studio email.
+2. Content Under Each Tab:
+   - TAB 1: [ Our Services ]
+     * Clean, unpretentious list of the core craft pillars:
+       1. Brand & Hospitality (Food, beverage, venues, and commercial spaces)
+       2. Real Estate & Architecture (Interiors, exteriors, twilight, 24h delivery)
+       3. Celebrations & Events (Birthdays, milestones, community gatherings)
+       4. Portraits & Milestones (Graduations, headshots, natural portraiture)
+     * Bullet points for each highlighting craft, delivery times, and inclusions.
+   - TAB 2: [ Contact Us ]
+     * Direct, transparent contact card:
+       - Studio Email: spmediaco7@gmail.com
+       - Base: Adelaide & Greater South Australia
+       - Quick-action buttons: "Email Us Directly" and direct inquiry button.
+   - TAB 3: [ Book Us ]
+     * The authentic story-first booking form:
+       - Inputs: First Name, Last Name, Email, Phone Number.
+       - Service Dropdown / Genre Selector.
+       - Suburb Autocomplete Input: Integrate `components/suburb-combobox.tsx` with live SA suburbs and Metro Adelaide badge.
+       - Story Textarea (exact wireframe wording): "Tell us about your story — we will convert it into photography."
+       - Submit button: "Send Inquiry" (connected to `/api/inquire`).
 
-4. Resend Lead Pipeline:
-   - Update `app/api/inquire/route.ts` to include the selected Suburb and Region status in the email sent to `spmediaco7@gmail.com`.
-
-5. Verification:
-   - Run `npm run build` to verify zero compile or type errors.
+3. Verification:
+   - Run `npm run build` to confirm zero TypeScript, lint, or JSX errors.
+   - Ensure `app/page.tsx` directly renders this wireframe without any lingering legacy SaaS layout elements.
    - Update `STATUS.md`.

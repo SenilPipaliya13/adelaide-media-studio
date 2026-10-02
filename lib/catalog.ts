@@ -72,26 +72,47 @@ export const FLOOR_PLAN_ADD_ON = {
   hint: "Simplified layout drawing for brochures and portals",
 } as const;
 
-// Service cards on the homepage studio hub. `href` points at the matching vertical page, when there is one.
+// Craft pillars on the homepage "Our Services" tab, also the Book tab's service dropdown.
+// `href` points at the matching vertical page, when there is one.
 export const HUB_SERVICES = {
-  commercial: {
-    label: "Commercial",
-    body: "Headshots, brand stories and event coverage for Lot Fourteen startups and CBD businesses.",
+  hospitality: {
+    label: "Brand & Hospitality",
+    scope: "Food, beverage, venues and commercial spaces",
+    points: [
+      "Menu, drinks and plated food styled and lit on location",
+      "Venue interiors, team portraits and behind-the-bar moments",
+      "Web, social and print ready files within 3–5 business days",
+    ],
     href: "/commercial",
   },
   "real-estate": {
-    label: "Real Estate",
-    body: "HDR interiors, drone cutaways, agent reels and council-ready floor plans for every listing.",
+    label: "Real Estate & Architecture",
+    scope: "Interiors, exteriors, twilight, 24h delivery",
+    points: [
+      "Bracketed HDR interiors and exteriors with true-to-life colour",
+      "Twilight exteriors and drone cutaways on request",
+      "Portal-ready gallery delivered within 24 hours",
+    ],
     href: "/real-estate",
   },
   celebrations: {
     label: "Celebrations & Events",
-    body: "Weddings in the Barossa, McLaren Vale and Adelaide Hills, plus milestones worth keeping.",
+    scope: "Birthdays, milestones, community gatherings",
+    points: [
+      "Candid, unobtrusive coverage of the people and the moments",
+      "Speeches, details and the room as it felt on the night",
+      "Private online gallery within 7 days, full-resolution downloads",
+    ],
     href: "/weddings",
   },
   portraits: {
-    label: "Portraits",
-    body: "Unhurried individual, couple and family portraits, shot somewhere around Adelaide that means something to you.",
+    label: "Portraits & Milestones",
+    scope: "Graduations, headshots, natural portraiture",
+    points: [
+      "Relaxed sessions in natural light, somewhere that means something to you",
+      "Graduation, family and professional headshot sessions",
+      "Hand-edited selects within 5 business days",
+    ],
     href: null,
   },
 } as const;
