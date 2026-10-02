@@ -6,9 +6,11 @@ import {
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
   NICHE_KEYS,
+  TIMELINE_KEYS,
   type HubService,
   type LocationKey,
   type Niche,
+  type Timeline,
 } from "@/lib/catalog";
 import { sendLeadNotification } from "@/lib/email";
 import { calculateEstimate } from "@/lib/pricing";
@@ -98,9 +100,10 @@ export async function POST(req: Request) {
     fields.phone = "Please enter a valid Australian phone number.";
   }
 
-  // The hub form has no date picker; the package form requires one.
-  const preferredDate = str(body.preferredDate, 10);
-  if (!isHub || preferredDate) {
+  // Hub leads give a timeline; only "a specific date" carries a date. The package form always needs one.
+  const timeline = isHub && TIMELINE_KEYS.includes(body.timeline as Timeline) ? (body.timeline as Timeline) : null;
+  const preferredDate = timeline && timeline !== "date" ? "" : str(body.preferredDate, 10);
+  if (!isHub || timeline === "date" || preferredDate) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate) || Number.isNaN(Date.parse(preferredDate))) {
       fields.preferredDate = "Please choose a date.";
     } else {
@@ -136,6 +139,7 @@ export async function POST(req: Request) {
     name,
     email,
     phone,
+    timeline,
     preferredDate: preferredDate || null,
     message: message || null,
     estimate,

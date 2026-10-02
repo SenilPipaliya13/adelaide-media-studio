@@ -1,28 +1,57 @@
 @import "tailwindcss";
 
 /*
- * SP Media Co. editorial palette
- * obsidian — deep near-black backgrounds
- * slate    — Tailwind's built-in slate scale for secondary text & borders
- * ivory    — warm off-white for primary text
- * copper   — muted copper/gold accent, used sparingly
+ * SP Media Co. editorial palette: warm museum canvas, deep warm carbon, champagne brass.
+ * canvas    — page background (warm off-white)
+ * stone     — soft warm stone for panels, chips and quiet fills
+ * line      — 1px hairlines on canvas; line-dark on carbon
+ * carbon    — primary text, dark panels and primary buttons
+ * ink-muted — secondary text (AA contrast on canvas and white)
+ * brass     — champagne accent for fills, rules and selected states
+ * brass-deep — brass for small text and icons on light grounds (AA contrast)
  */
 @theme {
-  --color-obsidian-700: #2a2a2e;
-  --color-obsidian-800: #1a1a1d;
-  --color-obsidian-900: #121214;
-  --color-obsidian-925: #0d0d11;
-  --color-obsidian-950: #0b0b0c;
+  --color-canvas: #f9f8f6;
+  --color-stone: #e7e3dc;
+  --color-line: #e2ddd5;
+  --color-line-dark: #262422;
 
-  --color-ivory: #f5f1ea;
-  --color-ivory-muted: #e8e2d6;
+  --color-carbon: #121110;
+  --color-carbon-soft: #2b2826;
+  --color-ink-muted: #6b655e;
 
-  --color-copper: #c08a5b;
-  --color-copper-light: #d6a877;
-  --color-copper-dark: #9a6b43;
+  --color-brass: #c5a880;
+  --color-brass-light: #d9c4a3;
+  --color-brass-deep: #7d6340;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-serif: var(--font-cormorant), "Playfair Display", ui-serif, Georgia, serif;
+
+  --shadow-ambient: 0 1px 2px rgb(18 17 16 / 0.04), 0 12px 32px -12px rgb(18 17 16 / 0.12);
+  --shadow-lifted: 0 2px 4px rgb(18 17 16 / 0.05), 0 24px 48px -16px rgb(18 17 16 / 0.18);
+
+  --animate-rise-in: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 html {
@@ -30,11 +59,16 @@ html {
 }
 
 body {
-  background: var(--color-obsidian-950);
-  color: var(--color-ivory);
+  background: var(--color-canvas);
+  color: var(--color-carbon);
 }
 
 ::selection {
-  background: var(--color-copper);
-  color: var(--color-obsidian-950);
+  background: var(--color-brass);
+  color: var(--color-carbon);
+}
+
+dialog::backdrop {
+  background: rgb(18 17 16 / 0.55);
+  backdrop-filter: blur(4px);
 }

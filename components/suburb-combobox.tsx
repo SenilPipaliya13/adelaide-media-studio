@@ -5,7 +5,7 @@ import { Check, MapPin, X } from "lucide-react";
 import { SUBURB_REGIONS, searchSuburbs, suburbKey, type Suburb } from "@/lib/sa-suburbs";
 
 const inputClass =
-  "w-full rounded-md border border-slate-600/60 bg-obsidian-900 px-3 py-2 text-sm text-ivory placeholder:text-slate-400 focus:border-copper focus:outline-none focus:ring-1 focus:ring-copper";
+  "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-carbon shadow-sm shadow-carbon/[0.02] transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
 
 // Search-as-you-type suburb picker following the WAI-ARIA combobox pattern
 // (ArrowUp/ArrowDown to move, Enter to select, Escape to close).
@@ -77,11 +77,11 @@ export function SuburbCombobox({
 
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm text-slate-300">
+      <label htmlFor={id} className="mb-2 block text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">
         {label}
       </label>
       <div className="relative">
-        <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brass-deep" />
         <input
           id={id}
           role="combobox"
@@ -102,14 +102,14 @@ export function SuburbCombobox({
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
           onKeyDown={onKeyDown}
-          className={`${inputClass} pl-9 pr-9`}
+          className={`${inputClass} pl-10 pr-10`}
         />
         {query && (
           <button
             type="button"
             aria-label="Clear suburb"
             onClick={clear}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 transition hover:text-ivory"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-ink-muted transition hover:bg-stone hover:text-carbon"
           >
             <X className="h-4 w-4" />
           </button>
@@ -120,7 +120,7 @@ export function SuburbCombobox({
           ref={listRef}
           role="listbox"
           hidden={!showList}
-          className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-md border border-slate-700/60 bg-obsidian-900 py-1 shadow-xl shadow-black/40"
+          className="absolute z-20 mt-2 max-h-72 w-full overflow-auto rounded-xl border border-line bg-white py-1.5 shadow-lifted"
         >
           {results.map((s, i) => (
             <li
@@ -134,12 +134,12 @@ export function SuburbCombobox({
                 select(s);
               }}
               onMouseEnter={() => setActive(i)}
-              className={`flex cursor-pointer items-center justify-between gap-3 px-3 py-2 text-sm transition ${
-                i === active ? "bg-copper/10 text-ivory" : "text-slate-300"
+              className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-sm transition ${
+                i === active ? "bg-stone/60 text-carbon" : "text-carbon/80"
               }`}
             >
               <span>
-                {s.name} <span className="tabular-nums text-slate-400">{s.postcode}</span>
+                {s.name} <span className="tabular-nums text-ink-muted">{s.postcode}</span>
               </span>
               <RegionBadge region={s.region} />
             </li>
@@ -148,24 +148,24 @@ export function SuburbCombobox({
       </div>
 
       {noMatch && (
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-2 text-xs text-ink-muted">
           No match yet. Mention your town in your story below and we&apos;ll confirm travel.
         </p>
       )}
       {region && (
         <p
           aria-live="polite"
-          className={`mt-2 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs ${
+          className={`mt-3 inline-flex animate-fade-in items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium tracking-wide ${
             value?.region === "metro"
-              ? "border-copper/40 bg-copper/10 text-copper-light"
-              : "border-slate-600/60 bg-obsidian-900 text-slate-300"
+              ? "border-brass/50 bg-brass/15 text-brass-deep"
+              : "border-line bg-stone/50 text-carbon/80"
           }`}
         >
           <Check className="h-3.5 w-3.5" />
           {region.reassurance}
         </p>
       )}
-      {error && <span className="mt-1 block text-xs text-red-400">{error}</span>}
+      {error && <span className="mt-1.5 block text-xs text-red-700">{error}</span>}
     </div>
   );
 }
@@ -175,7 +175,7 @@ function RegionBadge({ region }: { region: Suburb["region"] }) {
     <span
       title={SUBURB_REGIONS[region].label}
       className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-widest ${
-        region === "metro" ? "border-copper/40 text-copper" : "border-slate-600/60 text-slate-400"
+        region === "metro" ? "border-brass/50 text-brass-deep" : "border-line text-ink-muted"
       }`}
     >
       {SUBURB_REGIONS[region].short}

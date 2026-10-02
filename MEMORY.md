@@ -6,14 +6,15 @@ Project memory base. Read this before starting any task. The standards below are
 
 ### Next.js 15 App Router & React 19
 - Next.js 15.5 (App Router only, no `pages/` directory) with React 19.1 and TypeScript (`strict: true`).
-- Components in `app/` and `components/` are Server Components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs. Current client components: `components/inquiry-form.tsx` (vertical pages), `components/wireframe-hub.tsx` and `components/suburb-combobox.tsx` (homepage).
+- Components in `app/` and `components/` are Server Components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs. Current client components: `components/inquiry-form.tsx` (vertical pages), and `components/studio-tabs.tsx`, `components/booking-concierge.tsx` and `components/suburb-combobox.tsx` (homepage).
 - API endpoints are Route Handlers (`app/<path>/route.ts`) that export named HTTP methods (`POST`, `GET`, …).
 - Page metadata uses the `metadata` export or `generateMetadata`, not `<head>` tags.
 - Use the `@/` path alias for imports (`@/lib/...`, `@/components/...`).
 - Lint config is ESLint 9 flat config (`next/core-web-vitals` + `next/typescript`). `npm run build` must finish with zero TypeScript or lint errors.
 
 ### Styling: Tailwind CSS v4
-- Theme tokens (the `obsidian`, `ivory` and `copper` palettes, plus fonts) live in the `@theme` block in `app/globals.css`, which begins with `@import "tailwindcss";`.
+- Theme tokens live in the `@theme` block in `app/globals.css`, which begins with `@import "tailwindcss";`. The palette is a light editorial one: `canvas` (page), `carbon` (text, dark bands, primary buttons), `stone`, `line`/`line-dark` hairlines, `brass` accents and `ink-muted`. Use `brass-deep` rather than `brass` for small text or icons on light grounds, because plain brass fails contrast. Fonts are Cormorant Garamond (serif) and Inter (sans). The old `obsidian`/`ivory`/`copper` tokens no longer exist.
+- next/font `.variable` classes must stay on `<html>`, not `<body>` (see Lessons Learned, 2026-10-02).
 - There is **no** `tailwind.config.*` file. Do not create one. Add or change tokens in `@theme`.
 - PostCSS runs through `@tailwindcss/postcss` (`postcss.config.mjs`).
 - Icons come from `lucide-react`. Lucide v1 ships no brand logos (such as Instagram), so use generic icons.
@@ -31,4 +32,4 @@ Project memory base. Read this before starting any task. The standards below are
 ## Lessons Learned
 _Record the root cause and resolution of every build or validation error here, newest first. Format: date · symptom · root cause · resolution._
 
-- _No entries yet._
+- **2026-10-02 · Webfonts never rendered.** Every heading and label fell back to a system font, although the build passed and the CSS looked right (`.font-serif{font-family:var(--font-serif)}`). It was only caught by reading `getComputedStyle` in a real browser and looking at screenshots. **Root cause:** Tailwind v4 declares `--font-serif: var(--font-cormorant)…` on `:root`, but the next/font `.variable` classes were on `<body>`. A `var()` inside a custom property resolves on the element where that property is declared, so at `:root` `--font-cormorant` was undefined. That made the whole token invalid, and every descendant inherited the invalid value. **Resolution:** put the next/font variable classes on `<html>` (`app/layout.tsx`). Check rendered fonts in a browser after any font change, because the build won't catch this.

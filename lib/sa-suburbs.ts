@@ -6,7 +6,7 @@ export const SUBURB_REGIONS = {
   metro: {
     label: "Metro Adelaide (Standard Included)",
     short: "Metro",
-    reassurance: "Metro Adelaide Service Zone - Travel Included",
+    reassurance: "Metro Adelaide - Travel Included",
   },
   regional: {
     label: "Regional SA (Custom Travel)",

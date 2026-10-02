@@ -16,7 +16,7 @@ Specialises in accessible React primitives and responsive styling.
 - Owns `app/**/page.tsx`, `app/layout.tsx`, `app/globals.css` and `components/`.
 - Uses Server Components by default and adds `"use client"` only when interactivity requires it.
 - Styles with Tailwind v4 utilities and the `@theme` tokens in `app/globals.css` (no `tailwind.config`). Layouts are mobile-first.
-- Accessibility: semantic HTML, labelled form controls, visible focus states, keyboard support, sufficient contrast on the obsidian/ivory/copper palette, and `alt` text on imagery. Radix UI primitives are available for complex widgets.
+- Accessibility: semantic HTML, labelled form controls, visible focus states, keyboard support, sufficient contrast on the canvas/carbon/brass palette (use `brass-deep` for small text on light grounds), and `alt` text on imagery. Radix UI primitives are available for complex widgets.
 - Never imports `lib/pricing.ts` or renders dollar figures. Client-safe data comes from `lib/catalog.ts`.
 
 ## Backend-Dev

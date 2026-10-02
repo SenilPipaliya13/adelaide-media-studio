@@ -72,53 +72,69 @@ export const FLOOR_PLAN_ADD_ON = {
   hint: "Simplified layout drawing for brochures and portals",
 } as const;
 
-// Craft pillars on the homepage "Our Services" tab, also the Book tab's service dropdown.
-// `href` points at the matching vertical page, when there is one.
+// The four studio disciplines: homepage "Our Disciplines" showcase and step 1 of the booking
+// concierge. `href` points at the matching vertical page, when there is one.
 export const HUB_SERVICES = {
   hospitality: {
     label: "Brand & Hospitality",
-    scope: "Food, beverage, venues and commercial spaces",
+    scope: "Food, beverage, venues, commercial products",
     points: [
-      "Menu, drinks and plated food styled and lit on location",
-      "Venue interiors, team portraits and behind-the-bar moments",
-      "Web, social and print ready files within 3–5 business days",
+      "Menus, drinks and plated food styled and lit on location",
+      "Venue interiors, products and the team behind the bar",
+      "Web, social and print ready files",
     ],
+    turnaround: "3–5 days",
     href: "/commercial",
   },
   "real-estate": {
-    label: "Real Estate & Architecture",
-    scope: "Interiors, exteriors, twilight, 24h delivery",
+    label: "Spaces & Real Estate",
+    scope: "Interiors, architecture, 24h delivery",
     points: [
       "Bracketed HDR interiors and exteriors with true-to-life colour",
-      "Twilight exteriors and drone cutaways on request",
-      "Portal-ready gallery delivered within 24 hours",
+      "Architectural detail, twilight exteriors and drone on request",
+      "Portal-ready gallery for listings and agency marketing",
     ],
+    turnaround: "24–48 hours",
     href: "/real-estate",
   },
   celebrations: {
     label: "Celebrations & Events",
-    scope: "Birthdays, milestones, community gatherings",
+    scope: "Birthdays, corporate events, parties",
     points: [
       "Candid, unobtrusive coverage of the people and the moments",
       "Speeches, details and the room as it felt on the night",
-      "Private online gallery within 7 days, full-resolution downloads",
+      "Full-resolution downloads for every guest you share with",
     ],
+    turnaround: "3–5 days",
     href: "/weddings",
   },
   portraits: {
     label: "Portraits & Milestones",
-    scope: "Graduations, headshots, natural portraiture",
+    scope: "Graduations, creative portraits, headshots",
     points: [
       "Relaxed sessions in natural light, somewhere that means something to you",
-      "Graduation, family and professional headshot sessions",
-      "Hand-edited selects within 5 business days",
+      "Graduation, creative and professional headshot sessions",
+      "Hand-retouched selects ready to print or post",
     ],
+    // PLACEHOLDER: TASK.md gives no portrait turnaround. Confirm before launch.
+    turnaround: "3–5 days",
     href: null,
   },
 } as const;
 
 export type HubService = keyof typeof HUB_SERVICES;
 export const HUB_SERVICE_KEYS = Object.keys(HUB_SERVICES) as HubService[];
+
+// Step 2 of the booking concierge. "date" means the client picked a specific day.
+export const TIMELINES = {
+  date: "A specific date",
+  "two-weeks": "Within the next 2 weeks",
+  month: "Within the next month",
+  flexible: "Flexible — still planning",
+} as const;
+
+export type Timeline = keyof typeof TIMELINES;
+export const TIMELINE_KEYS = Object.keys(TIMELINES) as Timeline[];
 
 export const LOCATIONS = {
   cbd: { label: "Adelaide CBD", scope: "Metro" },

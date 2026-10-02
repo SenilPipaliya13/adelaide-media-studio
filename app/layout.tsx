@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -11,9 +11,11 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -37,8 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-AU">
-      <body className={`${inter.variable} ${fraunces.variable} font-sans antialiased`}>
+    // The next/font variables must sit on <html>: Tailwind declares --font-sans/--font-serif on :root,
+    // and a var() there can only see custom properties defined on the same element.
+    <html lang="en-AU" className={`${inter.variable} ${cormorant.variable}`}>
+      <body className="bg-canvas font-sans text-carbon antialiased">
         <JsonLd data={localBusinessSchema} />
         <SiteHeader />
         <main>{children}</main>

@@ -39,27 +39,27 @@ export function VerticalPage({
     <>
       <JsonLd data={serviceSchema} />
 
-      <section className="border-b border-slate-800 bg-gradient-to-b from-obsidian-900 to-obsidian-950">
+      <section className="border-b border-line bg-gradient-to-b from-stone/70 to-canvas">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-copper">{eyebrow}</p>
-          <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-tight text-ivory md:text-6xl">
+          <p className="text-xs font-medium uppercase tracking-[0.3em] text-brass-deep">{eyebrow}</p>
+          <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-tight text-carbon md:text-6xl">
             {title}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-300">{intro}</p>
+          <p className="mt-6 max-w-2xl text-lg text-carbon/75">{intro}</p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href="#inquire"
-              className="rounded-md bg-copper px-5 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
+              className="rounded-full bg-carbon px-6 py-3 text-sm font-medium tracking-wide text-canvas shadow-ambient transition hover:bg-carbon-soft"
             >
               Request a tailored quote
             </a>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-ink-muted">
               {priceNote ?? "Bespoke proposals, quoted to your brief"}
             </p>
           </div>
           {callout && (
-            <p className="mt-8 flex max-w-2xl items-start gap-3 rounded-lg border border-copper/40 bg-copper/10 px-4 py-3 text-sm text-ivory">
-              <callout.icon className="mt-0.5 h-5 w-5 shrink-0 text-copper" />
+            <p className="mt-8 flex max-w-2xl items-start gap-3 rounded-xl border border-brass/50 bg-brass/10 px-4 py-3 text-sm text-carbon">
+              <callout.icon className="mt-0.5 h-5 w-5 shrink-0 text-brass-deep" />
               {callout.text}
             </p>
           )}
@@ -69,10 +69,10 @@ export function VerticalPage({
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-6 md:grid-cols-3">
           {highlights.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="rounded-xl border border-slate-800 bg-obsidian-900 p-6">
-              <Icon className="h-6 w-6 text-copper" />
-              <h2 className="mt-4 font-serif text-xl text-ivory">{title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p>
+            <div key={title} className="rounded-xl border border-line bg-white p-6 shadow-ambient">
+              <Icon className="h-6 w-6 text-brass-deep" />
+              <h2 className="mt-4 font-serif text-xl text-carbon">{title}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-carbon/75">{body}</p>
             </div>
           ))}
         </div>
@@ -80,7 +80,7 @@ export function VerticalPage({
           {locations.map((loc) => (
             <span
               key={loc}
-              className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300"
+              className="rounded-full border border-line bg-white px-3 py-1 text-xs text-carbon/80"
             >
               {loc}
             </span>
@@ -88,9 +88,9 @@ export function VerticalPage({
         </div>
       </section>
 
-      <section id="inquire" className="scroll-mt-24 border-t border-slate-800 bg-obsidian-900/50">
+      <section id="inquire" className="scroll-mt-24 border-t border-line bg-stone/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="mb-8 font-serif text-3xl text-ivory">Tell us about your shoot</h2>
+          <h2 className="mb-8 font-serif text-3xl text-carbon">Tell us about your shoot</h2>
           <InquiryForm defaultNiche={niche} />
         </div>
       </section>

@@ -5,9 +5,11 @@ import {
   LAUNCH_NICHE,
   LOCATIONS,
   NICHES,
+  TIMELINES,
   type HubService,
   type LocationKey,
   type Niche,
+  type Timeline,
 } from "@/lib/catalog";
 import { SUBURB_REGIONS, type Suburb } from "@/lib/sa-suburbs";
 
@@ -31,6 +33,8 @@ export type LeadNotification = {
   name: string;
   email: string;
   phone: string;
+  // Booking concierge timeline (hub form only). "date" pairs with preferredDate.
+  timeline: Timeline | null;
   preferredDate: string | null;
   message: string | null;
   receivedAt: string;
@@ -63,6 +67,11 @@ function regionText(lead: LeadNotification) {
   if (!lead.suburb) return "Unknown (no suburb selected)";
   const region = SUBURB_REGIONS[lead.suburb.region];
   return `${region.label} · ${region.reassurance}`;
+}
+
+function timingText(lead: LeadNotification) {
+  if (lead.preferredDate) return formatDate(lead.preferredDate);
+  return lead.timeline ? TIMELINES[lead.timeline] : "Not given";
 }
 
 function locationText(lead: LeadNotification) {
@@ -105,25 +114,25 @@ export function leadHtml(lead: LeadNotification) {
 
   const row = (label: string, value: string) => `
     <tr>
-      <td style="padding:8px 12px 8px 0;color:#6b6b73;font-size:13px;vertical-align:top;white-space:nowrap;">${label}</td>
-      <td style="padding:8px 0;color:#0b0b0c;font-size:15px;">${value}</td>
+      <td style="padding:8px 12px 8px 0;color:#6b655e;font-size:13px;vertical-align:top;white-space:nowrap;">${label}</td>
+      <td style="padding:8px 0;color:#121110;font-size:15px;">${value}</td>
     </tr>`;
 
   const launchNote =
     lead.niche === LAUNCH_NICHE
-      ? `<p style="margin:0 0 16px;padding:10px 12px;background:#f5f1ea;border-left:3px solid #c08a5b;font-size:14px;color:#0b0b0c;">
+      ? `<p style="margin:0 0 16px;padding:10px 12px;background:#f9f8f6;border-left:3px solid #c5a880;font-size:14px;color:#121110;">
            Launch offer application #${lead.launchApplicationNumber ?? "?"} since the server last started. Only 5 places are available, so check the running total before accepting.
          </p>`
       : "";
 
   return `<!doctype html>
 <html>
-  <body style="margin:0;padding:24px;background:#f4f4f5;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;">
+  <body style="margin:0;padding:24px;background:#f3f1ed;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">
       <tr>
-        <td style="background:#0b0b0c;padding:20px 24px;">
-          <p style="margin:0;color:#c08a5b;font-size:12px;letter-spacing:2px;text-transform:uppercase;">New lead · ${e(lead.reference)}</p>
-          <h1 style="margin:6px 0 0;color:#f5f1ea;font-size:20px;font-weight:600;">${e(service)}</h1>
+        <td style="background:#121110;padding:20px 24px;">
+          <p style="margin:0;color:#c5a880;font-size:12px;letter-spacing:2px;text-transform:uppercase;">New lead · ${e(lead.reference)}</p>
+          <h1 style="margin:6px 0 0;color:#f9f8f6;font-size:20px;font-weight:600;">${e(service)}</h1>
         </td>
       </tr>
       <tr>
@@ -132,32 +141,32 @@ export function leadHtml(lead: LeadNotification) {
           <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
             ${row("Service", e(service))}
             ${row("Name", e(lead.name))}
-            ${row("Email", `<a href="mailto:${e(lead.email)}" style="color:#9a6b43;">${e(lead.email)}</a>`)}
-            ${row("Phone", `<a href="tel:${e(telHref)}" style="color:#9a6b43;">${e(lead.phone)}</a>`)}
+            ${row("Email", `<a href="mailto:${e(lead.email)}" style="color:#7d6340;">${e(lead.email)}</a>`)}
+            ${row("Phone", `<a href="tel:${e(telHref)}" style="color:#7d6340;">${e(lead.phone)}</a>`)}
             ${
               lead.source === "studio-hub"
                 ? row("Suburb", e(suburbText(lead))) + row("Region status", e(regionText(lead)))
                 : row("Location", e(locationText(lead)))
             }
-            ${row("Preferred date", lead.preferredDate ? e(formatDate(lead.preferredDate)) : "Not given")}
+            ${row("Preferred date", e(timingText(lead)))}
           </table>
 ${
   scope.length
     ? `
-          <h2 style="margin:24px 0 8px;font-size:14px;color:#0b0b0c;text-transform:uppercase;letter-spacing:1px;">Scope &amp; add-ons</h2>
-          <ul style="margin:0;padding-left:20px;color:#0b0b0c;font-size:14px;line-height:1.6;">
+          <h2 style="margin:24px 0 8px;font-size:14px;color:#121110;text-transform:uppercase;letter-spacing:1px;">Scope &amp; add-ons</h2>
+          <ul style="margin:0;padding-left:20px;color:#121110;font-size:14px;line-height:1.6;">
             ${scope.map((i) => `<li>${e(i)}</li>`).join("")}
           </ul>`
     : ""
 }
-          <h2 style="margin:24px 0 8px;font-size:14px;color:#0b0b0c;text-transform:uppercase;letter-spacing:1px;">${
+          <h2 style="margin:24px 0 8px;font-size:14px;color:#121110;text-transform:uppercase;letter-spacing:1px;">${
             lead.source === "studio-hub" ? "Client story" : "Client brief"
           }</h2>
-          <p style="margin:0;padding:12px;background:#f4f4f5;border-radius:6px;color:#0b0b0c;font-size:14px;line-height:1.6;white-space:pre-wrap;">${
+          <p style="margin:0;padding:12px;background:#f3f1ed;border-radius:6px;color:#121110;font-size:14px;line-height:1.6;white-space:pre-wrap;">${
             lead.message ? e(lead.message) : "<em>No message provided.</em>"
           }</p>
 
-          <p style="margin:24px 0 0;color:#6b6b73;font-size:12px;">Received ${e(lead.receivedAt)} · Reply to this email to respond to the client directly.</p>
+          <p style="margin:24px 0 0;color:#6b655e;font-size:12px;">Received ${e(lead.receivedAt)} · Reply to this email to respond to the client directly.</p>
         </td>
       </tr>
     </table>
@@ -178,7 +187,7 @@ export function leadText(lead: LeadNotification) {
     ...(isHub
       ? [`Suburb: ${suburbText(lead)}`, `Region status: ${regionText(lead)}`]
       : [`Location: ${locationText(lead)}`]),
-    `Preferred date: ${lead.preferredDate ?? "Not given"}`,
+    `Preferred date: ${lead.preferredDate ?? (lead.timeline ? TIMELINES[lead.timeline] : "Not given")}`,
     ...(scope.length ? ["", "Scope & add-ons:", ...scope.map((i) => `- ${i}`)] : []),
     "",
     isHub ? "Client story:" : "Client brief:",

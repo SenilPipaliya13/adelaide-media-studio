@@ -22,7 +22,7 @@ type Status =
   | { state: "error"; message: string; fields?: Record<string, string> };
 
 const inputClass =
-  "w-full rounded-md border border-slate-600/60 bg-obsidian-900 px-3 py-2 text-sm text-ivory placeholder:text-slate-400 focus:border-copper focus:outline-none focus:ring-1 focus:ring-copper";
+  "w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-carbon transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
 
 export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Niche }) {
   const [niche, setNiche] = useState<Niche>(defaultNiche);
@@ -118,13 +118,13 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
 
   if (status.state === "success") {
     return (
-      <div className="rounded-xl border border-copper/40 bg-obsidian-800 p-8 text-center">
-        <Check className="mx-auto mb-4 h-10 w-10 text-copper" />
-        <h3 className="font-serif text-2xl text-ivory">
+      <div className="rounded-xl border border-brass/50 bg-white p-8 shadow-ambient text-center">
+        <Check className="mx-auto mb-4 h-10 w-10 text-brass-deep" />
+        <h3 className="font-serif text-2xl text-carbon">
           {isLaunch ? "Application received" : "Brief received"}
         </h3>
-        <p className="mt-2 text-slate-300">{status.message}</p>
-        <p className="mt-4 text-xs uppercase tracking-widest text-slate-400">
+        <p className="mt-2 text-carbon/75">{status.message}</p>
+        <p className="mt-4 text-xs uppercase tracking-widest text-ink-muted">
           Reference {status.reference}
         </p>
       </div>
@@ -136,13 +136,13 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
       <form
         ref={formRef}
         onSubmit={onSubmit}
-        className="grid scroll-mt-28 gap-8 rounded-xl border border-slate-700/60 bg-obsidian-800 p-6 md:grid-cols-[1fr_320px] md:p-8"
+        className="grid scroll-mt-28 gap-8 rounded-xl border border-line bg-white p-6 shadow-ambient md:grid-cols-[1fr_320px] md:p-8"
         noValidate
       >
         <div className="space-y-6">
           {/* Niche */}
           <fieldset>
-            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
+            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-muted">
               What are we shooting?
             </legend>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -152,32 +152,32 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                   type="button"
                   onClick={() => setNiche(key)}
                   aria-pressed={niche === key}
-                  className={`rounded-md border px-3 py-2 text-sm transition ${
+                  className={`rounded-xl border px-3 py-2 text-sm transition ${
                     key === LAUNCH_NICHE ? "col-span-full inline-flex items-center justify-center gap-2" : ""
                   } ${
                     niche === key
-                      ? "border-copper bg-copper/10 text-ivory"
-                      : "border-slate-600/60 text-slate-300 hover:border-slate-400"
+                      ? "border-brass bg-brass/10 text-carbon"
+                      : "border-line text-carbon/75 hover:border-brass/60"
                   }`}
                 >
-                  {key === LAUNCH_NICHE && <Sparkles className="h-4 w-4 text-copper" />}
+                  {key === LAUNCH_NICHE && <Sparkles className="h-4 w-4 text-brass-deep" />}
                   {NICHES[key].label}
                 </button>
               ))}
             </div>
-            <p className="mt-2 text-xs text-slate-400">{pkg.summary}</p>
+            <p className="mt-2 text-xs text-ink-muted">{pkg.summary}</p>
           </fieldset>
 
           {/* Location */}
           <div>
             <label
               htmlFor="location"
-              className="mb-2 block text-xs font-medium uppercase tracking-widest text-slate-400"
+              className="mb-2 block text-xs font-medium uppercase tracking-widest text-ink-muted"
             >
               Location
             </label>
             <div className="relative">
-              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
               <input
                 id="location"
                 value={locationText}
@@ -197,8 +197,8 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                   onClick={() => pickLocation(key)}
                   className={`rounded-full border px-3 py-1 text-xs transition ${
                     locationKey === key
-                      ? "border-copper bg-copper/10 text-ivory"
-                      : "border-slate-600/60 text-slate-300 hover:border-slate-400"
+                      ? "border-brass bg-brass/10 text-carbon"
+                      : "border-line text-carbon/75 hover:border-brass/60"
                   }`}
                 >
                   {LOCATIONS[key].label}
@@ -209,7 +209,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
 
           {/* Add-ons (the complimentary launch session is fixed scope) */}
           <fieldset className="space-y-3" hidden={isLaunch}>
-            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
+            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-muted">
               Add-ons
             </legend>
             <Toggle
@@ -232,10 +232,10 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                 onChange={setFloorPlan}
               />
             )}
-            <div className="flex items-center justify-between rounded-md border border-slate-600/60 px-4 py-3">
+            <div className="flex items-center justify-between rounded-xl border border-line px-4 py-3">
               <div>
-                <p className="text-sm text-ivory">Extra hours</p>
-                <p className="text-xs text-slate-400">
+                <p className="text-sm text-carbon">Extra hours</p>
+                <p className="text-xs text-ink-muted">
                   Beyond the {pkg.includedHours} included hours
                 </p>
               </div>
@@ -245,17 +245,17 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                   aria-label="Remove an hour"
                   onClick={() => setExtraHours((h) => Math.max(0, h - 1))}
                   disabled={extraHours === 0}
-                  className="rounded-md border border-slate-600/60 p-1 text-slate-300 disabled:opacity-40"
+                  className="rounded-xl border border-line p-1 text-carbon/75 disabled:opacity-40"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="w-6 text-center text-sm tabular-nums text-ivory">{extraHours}</span>
+                <span className="w-6 text-center text-sm tabular-nums text-carbon">{extraHours}</span>
                 <button
                   type="button"
                   aria-label="Add an hour"
                   onClick={() => setExtraHours((h) => Math.min(MAX_EXTRA_HOURS, h + 1))}
                   disabled={extraHours === MAX_EXTRA_HOURS}
-                  className="rounded-md border border-slate-600/60 p-1 text-slate-300 disabled:opacity-40"
+                  className="rounded-xl border border-line p-1 text-carbon/75 disabled:opacity-40"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -265,7 +265,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
 
           {/* Client details */}
           <fieldset className="grid gap-4 sm:grid-cols-2">
-            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
+            <legend className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-muted">
               Your details
             </legend>
             <Field label="Name" error={fieldErrors.name}>
@@ -304,7 +304,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
-                className={`${inputClass} [color-scheme:dark]`}
+                className={`${inputClass} [color-scheme:light]`}
               />
             </Field>
             <div className="sm:col-span-2">
@@ -321,19 +321,19 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
         </div>
 
         {/* Scope summary */}
-        <aside className="h-fit rounded-lg border border-slate-700/60 bg-obsidian-900 p-5 md:sticky md:top-24">
-          <p className="text-xs font-medium uppercase tracking-widest text-copper">
+        <aside className="h-fit rounded-xl border border-line bg-canvas p-5 md:sticky md:top-24">
+          <p className="text-xs font-medium uppercase tracking-widest text-brass-deep">
             Estimated Scope Summary
           </p>
-          <p className="mt-2 font-serif text-2xl text-ivory">{pkg.label}</p>
-          <dl className="mt-4 space-y-4 border-t border-slate-700/60 pt-4 text-sm">
+          <p className="mt-2 font-serif text-2xl text-carbon">{pkg.label}</p>
+          <dl className="mt-4 space-y-4 border-t border-line pt-4 text-sm">
             <div>
-              <dt className="text-xs uppercase tracking-widest text-slate-400">Package deliverables</dt>
+              <dt className="text-xs uppercase tracking-widest text-ink-muted">Package deliverables</dt>
               <dd>
-                <ul className="mt-2 space-y-1.5 text-slate-300">
+                <ul className="mt-2 space-y-1.5 text-carbon/75">
                   {pkg.deliverables.map((item) => (
                     <li key={item} className="flex gap-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-copper" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-deep" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -341,20 +341,20 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-widest text-slate-400">Location scope</dt>
-              <dd className="mt-1 text-slate-300">{locationScope ?? "Not selected yet"}</dd>
+              <dt className="text-xs uppercase tracking-widest text-ink-muted">Location scope</dt>
+              <dd className="mt-1 text-carbon/75">{locationScope ?? "Not selected yet"}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-widest text-slate-400">Add-ons</dt>
+              <dt className="text-xs uppercase tracking-widest text-ink-muted">Add-ons</dt>
               <dd>
                 {activeAddOns.length > 0 ? (
-                  <ul className="mt-1 space-y-1 text-slate-300">
+                  <ul className="mt-1 space-y-1 text-carbon/75">
                     {activeAddOns.map((a) => (
                       <li key={a}>{a}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-1 text-slate-400">
+                  <p className="mt-1 text-ink-muted">
                     {isLaunch ? "Not available for this session" : "None selected"}
                   </p>
                 )}
@@ -362,12 +362,12 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
             </div>
             {isLaunch && (
               <div>
-                <dt className="text-xs uppercase tracking-widest text-slate-400">Total estimated price</dt>
-                <dd className="mt-1 font-serif text-xl text-ivory">$0 (Selected by Application)</dd>
+                <dt className="text-xs uppercase tracking-widest text-ink-muted">Total estimated price</dt>
+                <dd className="mt-1 font-serif text-xl text-carbon">$0 (Selected by Application)</dd>
               </div>
             )}
           </dl>
-          <p className="mt-4 text-xs text-slate-400">
+          <p className="mt-4 text-xs text-ink-muted">
             {isLaunch
               ? "In return we ask for a verified Google review and permission to feature the imagery in our launch portfolio."
               : "Every shoot is quoted individually. We'll reply with a bespoke proposal."}
@@ -375,7 +375,7 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
           <button
             type="submit"
             disabled={status.state === "submitting"}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-copper px-4 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light disabled:opacity-60"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-carbon px-4 py-3 text-sm font-medium tracking-wide text-canvas transition hover:bg-carbon-soft disabled:opacity-60"
           >
             {status.state === "submitting" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -385,15 +385,15 @@ export function InquiryForm({ defaultNiche = "weddings" }: { defaultNiche?: Nich
             {isLaunch ? "Apply for Complimentary Session" : "Request Tailored Quote"}
           </button>
           {status.state === "error" && (
-            <p role="alert" className="mt-3 text-sm text-red-400">
+            <p role="alert" className="mt-3 text-sm text-red-700">
               {status.message}
             </p>
           )}
         </aside>
       </form>
-      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-400">
-        <MessageCircle className="h-4 w-4 text-copper" />
-        <Phone className="h-4 w-4 text-copper" />
+      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-ink-muted">
+        <MessageCircle className="h-4 w-4 text-brass-deep" />
+        <Phone className="h-4 w-4 text-brass-deep" />
         Prefer a faster response? DM us on Instagram @spmediaco or call us directly.
       </p>
     </>
@@ -412,10 +412,10 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between rounded-md border border-slate-600/60 px-4 py-3">
+    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-line px-4 py-3">
       <div>
-        <p className="text-sm text-ivory">{label}</p>
-        <p className="text-xs text-slate-400">{hint}</p>
+        <p className="text-sm text-carbon">{label}</p>
+        <p className="text-xs text-ink-muted">{hint}</p>
       </div>
       <input
         type="checkbox"
@@ -424,7 +424,7 @@ function Toggle({
         onChange={(e) => onChange(e.target.checked)}
         className="peer sr-only"
       />
-      <span className="relative h-6 w-11 rounded-full bg-slate-600 transition peer-checked:bg-copper peer-focus-visible:ring-2 peer-focus-visible:ring-copper after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-ivory after:transition peer-checked:after:translate-x-5" />
+      <span className="relative h-6 w-11 rounded-full bg-stone transition peer-checked:bg-brass peer-focus-visible:ring-2 peer-focus-visible:ring-brass/50 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition peer-checked:after:translate-x-5" />
     </label>
   );
 }
@@ -440,9 +440,9 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm text-slate-300">{label}</span>
+      <span className="mb-1 block text-sm text-carbon/75">{label}</span>
       {children}
-      {error && <span className="mt-1 block text-xs text-red-400">{error}</span>}
+      {error && <span className="mt-1 block text-xs text-red-700">{error}</span>}
     </label>
   );
 }

@@ -1,5 +1,54 @@
 # STATUS — SP Media Co.
 
+## Full Visual Identity Overhaul: Luxury Editorial Boutique Studio
+**Status:** ✅ Complete · 2026-10-02 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings, and `npm run lint` is clean. `/` is 13.7 kB / 120 kB First Load JS (ISR, `revalidate = 3600`), up from 9.07 kB / 115 kB because of the concierge. Vertical pages are unchanged at 124 B / 110 kB. Shared JS is 103 kB. No pricing constants appear in `.next/static`.
+
+### Changes
+| File | Change |
+|---|---|
+| `app/globals.css` | New palette in `@theme`: `canvas` #F9F8F6 (page), `carbon` #121110 (text, dark panels, primary buttons), `carbon-soft`, `stone` #E7E3DC, `line` #E2DDD5, `line-dark` #262422, `brass` #C5A880, `brass-light`, `brass-deep` #7D6340 (brass for small text on light grounds, AA contrast) and `ink-muted` #6B655E. Also `shadow-ambient` / `shadow-lifted`, `animate-rise-in` / `animate-fade-in` keyframes, and a blurred `dialog::backdrop`. The old `obsidian`, `ivory` and `copper` tokens are gone and nothing references them. |
+| `app/layout.tsx` | Serif font is now **Cormorant Garamond** (400/500/600, italic) in place of Fraunces, with Inter for sans. The font variable classes moved from `<body>` to `<html>`. That fixes a bug that predates this task, where no webfont rendered at all (see MEMORY.md, Lessons Learned). |
+| `components/booking-concierge.tsx` (new) | Client multi-step concierge. **Step 1:** four selectable discipline cards (native radios, icon, title, scope, brass check when selected). **Step 2:** the SA suburb combobox with the "Metro Adelaide - Travel Included" badge, plus a timeline choice (a specific date / within 2 weeks / within a month / flexible). Picking a specific date shows a date input with a minimum of today in Adelaide. **Step 3:** First Name, Last Name, Direct Phone Number, Email, the serif-italic "Tell us about your story — we will convert it into photography." textarea, and the "Adelaide Based Studio · Fast 2-Hour Response · High-Resolution Masters" badges. A progress rail, per-step validation, Back/Continue, an animated step transition (`motion-safe`) and focus moved to each step heading. Server field errors for suburb or date send the client back to step 2. On success it posts to `/api/inquire` and opens a native `<dialog>` confirmation modal showing discipline, location, timing and reference. Closing it (button or Escape) resets the form. |
+| `components/studio-tabs.tsx` (new, replaces `components/wireframe-hub.tsx`) | Segment tabs **Our Disciplines · About The Craft · Reserve Session**, using the ARIA tabs pattern with arrow, Home and End keys. **Our Disciplines:** four editorial cards with scope, three points, a "Delivered in …" turnaround tag, "Reserve this session" (opens the concierge at step 2 with that discipline already chosen) and "See the work". Below them is a carbon "What every session includes" band: Canon full-frame glass & natural studio light, hand-graded high-resolution masters, a private password-protected download gallery, and transparent turnaround times (24–48 h real estate, 3–5 days events and hospitality). **About The Craft:** a four-step process (story, session, grade, delivery) and a Reserve CTA. Deep links: `#disciplines`/`#services`, `#craft`/`#about`, and `#reserve`/`#book`/`#inquire`/`#apply-launch-initiative`. |
+| `app/page.tsx` | Rewritten. Masthead "SP MEDIA CO." with "Adelaide, South Australia · Commercial, Spaces & Event Studio", then the daily quote in a serif-italic quote card, then the tabs, then the **Adelaide Studio Guarantee** (`#contact`) with ABN 46 478 326 745 (from `lib/seo.ts`), a direct phone `tel:` link, a WhatsApp `wa.me` link and `spmediaco7@gmail.com`. |
+| `lib/catalog.ts` | `HUB_SERVICES` labels and scopes now match TASK.md ("Spaces & Real Estate", "Birthdays, corporate events, parties", etc.). Each discipline has a new `turnaround` field. New `TIMELINES` / `TIMELINE_KEYS`. |
+| `app/api/inquire/route.ts` | Hub leads accept `timeline`. `timeline: "date"` requires a valid, non-past `preferredDate`, and other timelines ignore any date sent. `timeline` is stored on the inquiry record (`null` for package-form leads). |
+| `lib/email.ts` | The lead email's "Preferred date" row shows the date, or the timeline label (e.g. "Flexible — still planning"). Template colours moved to the new palette. |
+| `lib/sa-suburbs.ts` | The metro badge text is now exactly "Metro Adelaide - Travel Included". |
+| `components/suburb-combobox.tsx`, `site-header.tsx`, `site-footer.tsx`, `vertical-page.tsx`, `inquiry-form.tsx` | Restyled for the canvas, carbon and brass palette: rounded-xl, hairline borders, ambient shadows, pill buttons. The header CTA is now "Reserve" → `/#reserve` and the footer is a carbon band. Behaviour is unchanged. |
+
+### Verification
+- **API (`next start`, `RESEND_API_KEY` blanked):** hub with `timeline: "flexible"` → 201. Hub with `timeline: "date"` and 2026-11-20 → 201. `timeline: "date"` with no date → 422 `preferredDate`. A past date → 422. An invalid hub payload → 422 for suburb, names, email, phone and message. Package-form wedding (Barossa, drone, rush, +2 h) → 201 with a floor total of 3520, unchanged. The lead log carries `timeline`.
+- **Real browser (headless Chrome via the DevTools protocol, 32/32 checks passed):**
+  - Fonts and theme: Cormorant renders and the canvas background applies.
+  - Tabs: the default tab, click and ArrowRight switching, and the `#reserve` deep link all work.
+  - Step 1: blocks with no choice, and a selected card gets the brass border.
+  - Step 2: blocks with no suburb or timing. Keyboard and mouse combobox picks both work and show the "Metro Adelaide - Travel Included" badge. The date input appears, a past date is rejected and the error clears on edit.
+  - Back and Continue keep their state.
+  - Step 3: an empty submit shows the server's field errors. A valid submit opens the confirmation modal with name, discipline, suburb, date and reference.
+  - Escape closes the modal and resets the form. "Reserve this session" opens step 2 with the discipline already chosen.
+  - On a 390 px mobile viewport the tabs fit on one row.
+- Screenshots of desktop and mobile were reviewed. That review found two stale-error bugs and the mobile tab wrap, and all three were fixed before this entry.
+- **Not tested:** Safari/iOS (the native `<dialog>` and `:has()` need Safari 15.4 or later), screen-reader announcement, and a real Resend send.
+
+### Notes: check these before going live
+- **Phone and WhatsApp links are still the placeholder `0400 000 000`** (`lib/contact.ts`). TASK.md asks for a direct phone and WhatsApp quick link in the Guarantee, so they are now prominently displayed. Set the real number before deploying.
+- **The response promises disagree.** The step 3 badge says "Fast 2-Hour Response" (wording from TASK.md), but the API success message in the modal says "within 24 hours". Pick one and align the other.
+- **"Private password-protected client download gallery" is promised but not built.** Galleries on Cloudflare R2 are still in the backlog.
+- **Portrait turnaround (3–5 days) is a placeholder.** TASK.md only gave times for real estate (24–48 h) and events/hospitality (3–5 days). Events dropped from the earlier placeholder of 7 days to 3–5 days to match TASK.md.
+- The real estate vertical page callout still says floor plans are "delivered in 24 hours", while the homepage says 24–48 hours for real estate. These aren't contradictory, but you may want one figure.
+- The site header wordmark still appears above the homepage masthead.
+
+### Active backlog
+- Set the real studio phone in `lib/contact.ts`.
+- Align the 2-hour badge with the 24-hour confirmation message.
+- Confirm the portrait turnaround.
+- Test in Safari/iOS and with a screen reader.
+- All earlier backlog items below are still open.
+
 ## Homepage Replacement: Exact Wireframe Layout
 **Status:** ✅ Complete · 2026-10-02 (ACST)
 
