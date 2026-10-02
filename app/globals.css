@@ -1,34 +1,55 @@
 @import "tailwindcss";
 
 /*
- * SP Media Co. editorial palette: warm museum canvas, deep warm carbon, champagne brass.
- * canvas    — page background (warm off-white)
- * stone     — soft warm stone for panels, chips and quiet fills
- * line      — 1px hairlines on canvas; line-dark on carbon
- * carbon    — primary text, dark panels and primary buttons
- * ink-muted — secondary text (AA contrast on canvas and white)
- * brass     — champagne accent for fills, rules and selected states
+ * SP Media Co. warm gallery palette: ivory linen base, deep carbon text, aged-gold accents.
+ * These are the source values; the @theme tokens below read from them.
+ */
+:root {
+  --bg-main: #fbf9f5;
+  --text-main: #1c1a17;
+  --text-muted: #6e685f;
+  --border-line: #e7e2d8;
+  --card-bg: #ffffff;
+  --accent-gold: #9e7d47;
+
+  /* Always render the light palette. Without this, Chrome Auto Dark Mode, Samsung Internet
+     and similar "force dark" modes invert the page into black with white text. */
+  color-scheme: only light;
+}
+
+/*
+ * Tailwind tokens.
+ * canvas     — page background (ivory linen)
+ * stone      — soft warm stone for panels, chips and quiet fills
+ * line       — 1px hairlines on canvas; line-dark on carbon
+ * carbon     — primary text, dark panels and primary buttons
+ * ink-muted  — secondary text (AA contrast on canvas and white)
+ * gold       — aged-gold accent for rules, icons and decorative marks (not small text: 3.6:1 on canvas)
+ * brass      — champagne accent for fills, selected states and accents on carbon
  * brass-deep — brass for small text and icons on light grounds (AA contrast)
  */
 @theme {
-  --color-canvas: #f9f8f6;
-  --color-stone: #e7e3dc;
-  --color-line: #e2ddd5;
-  --color-line-dark: #262422;
+  --color-canvas: var(--bg-main);
+  --color-card: var(--card-bg);
+  --color-stone: #ece7de;
+  --color-line: var(--border-line);
+  --color-line-dark: #2a2724;
 
-  --color-carbon: #121110;
-  --color-carbon-soft: #2b2826;
-  --color-ink-muted: #6b655e;
+  --color-carbon: var(--text-main);
+  --color-carbon-soft: #34302b;
+  --color-ink-muted: var(--text-muted);
 
+  --color-gold: var(--accent-gold);
   --color-brass: #c5a880;
   --color-brass-light: #d9c4a3;
   --color-brass-deep: #7d6340;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), "Playfair Display", ui-serif, Georgia, serif;
+  --font-sans:
+    var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
-  --shadow-ambient: 0 1px 2px rgb(18 17 16 / 0.04), 0 12px 32px -12px rgb(18 17 16 / 0.12);
-  --shadow-lifted: 0 2px 4px rgb(18 17 16 / 0.05), 0 24px 48px -16px rgb(18 17 16 / 0.18);
+  --shadow-ambient: 0 1px 2px rgb(28 26 23 / 0.04), 0 12px 32px -12px rgb(28 26 23 / 0.1);
+  --shadow-lifted: 0 2px 4px rgb(28 26 23 / 0.05), 0 24px 48px -16px rgb(28 26 23 / 0.16);
 
   --animate-rise-in: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.3s ease-out both;
@@ -56,11 +77,14 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-main);
 }
 
 body {
-  background: var(--color-canvas);
-  color: var(--color-carbon);
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
@@ -69,6 +93,6 @@ body {
 }
 
 dialog::backdrop {
-  background: rgb(18 17 16 / 0.55);
+  background: rgb(28 26 23 / 0.5);
   backdrop-filter: blur(4px);
 }

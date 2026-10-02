@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
@@ -31,6 +31,12 @@ export const metadata: Metadata = {
     locale: "en_AU",
     type: "website",
   },
+};
+
+// "only light" opts out of browser force-dark modes, which otherwise invert the ivory palette to black.
+export const viewport: Viewport = {
+  colorScheme: "only light",
+  themeColor: "#FBF9F5",
 };
 
 export default function RootLayout({

@@ -16,17 +16,17 @@ export default function HomePage() {
         {/* Soft brass glow behind the masthead */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-0 h-[28rem] w-[56rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brass/15 blur-3xl"
+          className="pointer-events-none absolute left-1/2 top-0 h-[28rem] w-[56rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-3xl"
         />
         <div className="relative">
           <h1 className="font-serif text-5xl font-medium tracking-[0.18em] text-carbon md:text-7xl">SP MEDIA CO.</h1>
-          <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-brass" />
+          <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-gold" />
           <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-ink-muted md:text-xs">
             Adelaide, South Australia · Commercial, Spaces &amp; Event Studio
           </p>
 
-          <figure className="mx-auto mt-14 max-w-2xl rounded-xl border border-line bg-white/80 px-8 py-10 shadow-ambient backdrop-blur md:px-14">
-            <Quote aria-hidden className="mx-auto h-5 w-5 text-brass" strokeWidth={1.5} />
+          <figure className="mx-auto mt-14 max-w-2xl rounded-xl border border-line bg-card/80 px-8 py-10 shadow-ambient backdrop-blur md:px-14">
+            <Quote aria-hidden className="mx-auto h-5 w-5 text-gold" strokeWidth={1.5} />
             <blockquote className="mt-5 font-serif text-2xl italic leading-snug text-carbon md:text-3xl">
               &ldquo;{quote.text}&rdquo;
             </blockquote>
@@ -89,7 +89,7 @@ function GuaranteeItem({
       <span className="mt-1 block break-words font-serif text-xl text-carbon">{value}</span>
     </>
   );
-  const className = "block h-full rounded-xl border border-line bg-white p-6 shadow-ambient";
+  const className = "block h-full rounded-xl border border-line bg-card p-6 shadow-ambient";
 
   return (
     <li>
@@ -97,7 +97,7 @@ function GuaranteeItem({
         <a
           href={href}
           {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          className={`${className} transition duration-300 hover:-translate-y-0.5 hover:border-brass/60 hover:shadow-lifted focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50`}
+          className={`${className} transition duration-300 hover:-translate-y-0.5 hover:border-gold/60 hover:shadow-lifted focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50`}
         >
           {body}
         </a>

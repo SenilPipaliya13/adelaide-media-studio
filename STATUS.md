@@ -1,5 +1,39 @@
 # STATUS — SP Media Co.
 
+## Strip Dark Mode & Warm Editorial Gallery Palette
+**Status:** ✅ Complete · 2026-10-02 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings, and `npm run lint` is clean. Route sizes haven't changed: `/` is 13.7 kB / 120 kB, vertical pages are 124 B / 110 kB and shared JS is 103 kB.
+
+### Diagnosis
+The source code was already light: there was no `dark:` variant or `prefers-color-scheme` rule anywhere, and the body was set to the canvas colour. The site, however, declared no `color-scheme`. Browsers with a force-dark mode treat such a page as fair game and repaint it with a black background and white text. That covers Chrome's Auto Dark Mode flag, Samsung Internet's dark mode, Opera, and dark-reader-style extensions. This is the most likely cause of the "pitch-black dark mode with floating white text" report. A stale deployment or browser cache is the other possibility. I couldn't check the live Vercel site from here.
+
+### Changes
+| File | Change |
+|---|---|
+| `app/globals.css` | Adopts TASK.md's warm linen palette as `:root` source variables: `--bg-main` #FBF9F5, `--text-main` #1C1A17, `--text-muted` #6E685F, `--border-line` #E7E2D8, `--card-bg` #FFFFFF and `--accent-gold` #9E7D47. The `@theme` tokens now read from them: `canvas`, `carbon`, `ink-muted`, `line`, the new `card`, and the new `gold`. `stone`, `line-dark`, `carbon-soft` and the shadows were warmed to match. `color-scheme: only light` is set on `:root`. The body background and text colour use `!important`, as TASK.md specified. The TASK.md system-sans and Georgia stacks are now the fallbacks in `--font-sans` and `--font-serif`. |
+| `app/layout.tsx` | New `viewport` export with `colorScheme: "only light"` and `themeColor: "#FBF9F5"`. This emits `<meta name="color-scheme" content="only light">`, which is the opt-out Chrome's force-dark mode respects. |
+| `app/page.tsx` | The masthead rule, the quote mark and the brass glow behind the masthead now use the new `gold` accent. The quote card and the Guarantee cards use the `card` token. |
+
+### Deviations from TASK.md (deliberate)
+- **The CSS was not pasted verbatim.** The snippet in TASK.md is Tailwind v3 syntax (`@tailwind base; @tailwind components;`). This project runs Tailwind v4, which no longer supports those directives. Replacing the file would also have deleted the `@theme` block, which would remove every token the components use (`bg-canvas`, `text-carbon`, `brass`, the shadows and the animations) and leave the site unstyled. I kept the palette values and the `!important` body colours from TASK.md and wrote them in v4 form.
+- **The webfonts were kept.** TASK.md's unlayered `body { font-family }` and `.font-serif { font-family }` rules would override Tailwind's layered utilities, replacing Inter and Cormorant Garamond with system sans and Georgia. That would undo the refined typography the task asks for. The TASK.md stacks are used as fallbacks instead.
+- **`#9E7D47` gold is used only for decorative marks.** It measures 3.6:1 against the canvas, which fails AA for small text. Small brass text still uses `brass-deep` (#7D6340). Text on the carbon bands keeps `brass` (#C5A880), because gold measures about 4.5:1 on carbon, which is borderline.
+- **The `page.tsx` instructions were missing.** TASK.md says to overwrite `page.tsx` with "full story booking", but the file ends after step 1, with no page content or steps 2+. The homepage already has the full story booking concierge, so it was only restyled with the new tokens and not rewritten.
+
+### Verification (`next start`, headless Chrome via DevTools protocol)
+- The HTML contains `<meta name="color-scheme" content="only light">` and `<meta name="theme-color" content="#FBF9F5">`.
+- Computed body background is `rgb(251, 249, 245)` (#FBF9F5) and computed text colour is `rgb(28, 26, 23)` (#1C1A17). The root `color-scheme` is `light only`.
+- Inter and Cormorant Garamond both load. The h1 renders in Cormorant and the body in Inter.
+- I ran the page again with Chrome's force-dark flags on (`--force-dark-mode --enable-features=WebContentsForceDark`). The same values came back and the screenshot showed the ivory page, not an inverted one. I did not capture a before-fix baseline with these flags, so this confirms the opt-out works but not that force-dark caused the original report.
+- **Not tested:** Samsung Internet, iOS Safari, and the live Vercel deployment.
+
+### Active backlog
+- If the live site still looks dark after this deploy, hard-refresh it and check the Vercel deployment status. A failed or stale deploy would also explain the report.
+- Send the rest of the TASK.md brief (steps 2+ and the `page.tsx` content) if more was intended.
+- All earlier backlog items below are still open.
+
 ## Full Visual Identity Overhaul: Luxury Editorial Boutique Studio
 **Status:** ✅ Complete · 2026-10-02 (ACST)
 
