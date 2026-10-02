@@ -1,5 +1,34 @@
 # STATUS — SP Media Co.
 
+## Strip Cheap SaaS Elements & Editorial Studio Styling
+**Status:** ✅ Complete · 2026-10-02 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings, and `npm run lint` is clean. `/` is 13.6 kB / 120 kB (down from 13.7 kB). Vertical pages are unchanged at 124 B / 110 kB and shared JS is 103 kB.
+
+### Changes
+| File | Change |
+|---|---|
+| `app/page.tsx` | Removed the blurred gold glow behind the masthead. The quote is now a plain pull quote between top and bottom hairlines (`border-y border-line py-8 max-w-2xl mx-auto`), with no card, shadow or `backdrop-blur`. The Guarantee cards lost `rounded-xl`, `shadow-ambient` and the hover lift. They now have a crisp `border-line` border that darkens on hover. |
+| `components/studio-tabs.tsx` | The rounded pill toggle is now uppercase, letter-spaced text tabs on a hairline, and the active tab is marked with a carbon underline. The ARIA tabs behaviour is unchanged. The discipline cards, the "What every session includes" band, the process grid and the CTA box are now square-cornered with no shadow or lift, and the cards' borders darken on hover. The "Delivered in…" pill is now a plain uppercase label. Buttons are rectangular with `text-[11px] uppercase tracking-[0.25em]`. |
+| `components/booking-concierge.tsx` | The green-tick pill badges are now one quiet line: "ABN Registered · Metro Adelaide Travel Included · High-Res Digital Masters", rendered uppercase with CSS. The form panel, discipline and timeline options, inputs, error box, confirmation modal and its detail list are square-cornered with no shadow or hover lift. Back, Continue, Reserve Session and Close are rectangular uppercase buttons. |
+| `components/suburb-combobox.tsx` | Same square, shadowless input style as the concierge, so step 2 matches. The dropdown keeps its shadow because it is a real overlay. |
+| `components/site-header.tsx` | The "Reserve" CTA in the header is rectangular instead of a pill. |
+
+### Verification (`next start`, headless Chrome via DevTools protocol, 1440 px and 390 px)
+- The active tab has a carbon bottom border, inactive tabs are transparent, and all tabs have a 0 px radius. At 390 px the three tabs sit on one row, with labels wrapping to two lines.
+- The quote figure and the discipline cards compute `border-radius: 0px` and `box-shadow: none`.
+- Selecting a discipline and pressing Continue still moves to step 2.
+- I reviewed the desktop and mobile screenshots.
+
+### Notes
+- **The response-time conflict is resolved.** The old "Fast 2-Hour Response" badge is gone, so nothing contradicts the "within 24 hours" success message any more.
+- **Still on the old styling, outside the TASK.md file list:** the vertical pages (`components/vertical-page.tsx`) and the package form (`components/inquiry-form.tsx`) still use `rounded-xl` cards, `shadow-ambient` and pill buttons. So do the suburb combobox's "Metro Adelaide - Travel Included" badge and the round icon chips on the discipline cards. Say if you want those changed to match.
+
+### Active backlog
+- Bring `vertical-page.tsx` and `inquiry-form.tsx` in line with the editorial styling.
+- All earlier backlog items below are still open.
+
 ## Strip Dark Mode & Warm Editorial Gallery Palette
 **Status:** ✅ Complete · 2026-10-02 (ACST)
 

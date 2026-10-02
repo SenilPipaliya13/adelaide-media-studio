@@ -41,10 +41,10 @@ type Step = (typeof STEPS)[number]["n"];
 // Server field errors that belong to an earlier step send the client back to it.
 const FIELD_STEP: Record<string, Step> = { suburb: 2, preferredDate: 2 };
 
-const TRUST_BADGES = ["Adelaide Based Studio", "Fast 2-Hour Response", "High-Resolution Masters"];
+const ASSURANCES = ["ABN Registered", "Metro Adelaide Travel Included", "High-Res Digital Masters"];
 
 const inputClass =
-  "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-carbon shadow-sm shadow-carbon/[0.02] transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
+  "w-full border border-line bg-white px-4 py-3 text-sm text-carbon transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
 
 const labelClass = "mb-2 block text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted";
 
@@ -227,7 +227,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
       <form
         onSubmit={onSubmit}
         noValidate
-        className="rounded-xl border border-line bg-white p-6 shadow-ambient md:p-10"
+        className="border border-line bg-white p-6 md:p-10"
       >
         <div key={step} className="motion-safe:animate-rise-in">
           <p className="text-[11px] uppercase tracking-[0.25em] text-brass-deep">
@@ -254,7 +254,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
                     return (
                       <label
                         key={key}
-                        className="group relative flex cursor-pointer flex-col rounded-xl border border-line bg-canvas p-5 transition duration-300 hover:-translate-y-0.5 hover:border-brass/60 hover:shadow-ambient has-checked:border-brass has-checked:bg-brass/10 has-checked:shadow-ambient has-focus-visible:ring-2 has-focus-visible:ring-brass/40"
+                        className="group relative flex cursor-pointer flex-col border border-line bg-canvas p-5 transition-colors duration-300 hover:border-carbon/30 has-checked:border-brass has-checked:bg-brass/10 has-focus-visible:ring-2 has-focus-visible:ring-brass/40"
                       >
                         <input
                           type="radio"
@@ -306,7 +306,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
                     {TIMELINE_KEYS.map((key) => (
                       <label
                         key={key}
-                        className="flex cursor-pointer items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-sm text-carbon/85 transition hover:border-brass/60 has-checked:border-brass has-checked:bg-brass/10 has-checked:text-carbon has-focus-visible:ring-2 has-focus-visible:ring-brass/40"
+                        className="flex cursor-pointer items-center gap-3 border border-line bg-canvas px-4 py-3 text-sm text-carbon/85 transition hover:border-brass/60 has-checked:border-brass has-checked:bg-brass/10 has-checked:text-carbon has-focus-visible:ring-2 has-focus-visible:ring-brass/40"
                       >
                         <input
                           type="radio"
@@ -423,24 +423,16 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
                   <FieldError message={errors.message} />
                 </label>
 
-                <ul className="flex flex-wrap items-center gap-2" aria-label="Studio assurances">
-                  {TRUST_BADGES.map((badge) => (
-                    <li
-                      key={badge}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-brass/40 bg-brass/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.15em] text-brass-deep"
-                    >
-                      <Check aria-hidden className="h-3 w-3" />
-                      {badge}
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-[11px] uppercase leading-relaxed tracking-[0.2em] text-ink-muted">
+                  {ASSURANCES.join(" · ")}
+                </p>
               </div>
             )}
           </div>
         </div>
 
         {formError && (
-          <p role="alert" className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <p role="alert" className="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             {formError}
           </p>
         )}
@@ -454,7 +446,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
                 setFormError(null);
                 goTo((step - 1) as Step);
               }}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm text-ink-muted transition hover:bg-stone/60 hover:text-carbon focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/40"
+              className="inline-flex items-center gap-2 px-1 py-3 text-[11px] font-medium uppercase tracking-[0.25em] text-ink-muted transition-colors hover:text-carbon focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/40"
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
@@ -464,7 +456,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center gap-2 rounded-full bg-carbon px-6 py-3 text-sm font-medium tracking-wide text-canvas shadow-ambient transition hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 disabled:opacity-60"
+            className="inline-flex items-center gap-2 bg-carbon px-6 py-3 text-[11px] font-medium uppercase tracking-[0.25em] text-canvas transition-colors hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 disabled:opacity-60"
           >
             {step < 3 ? (
               <>
@@ -487,7 +479,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
         ref={dialogRef}
         onClose={reset}
         aria-labelledby="concierge-confirmation-title"
-        className="m-auto w-[min(92vw,32rem)] rounded-xl border border-line bg-canvas p-0 text-carbon shadow-lifted open:motion-safe:animate-rise-in"
+        className="m-auto w-[min(92vw,32rem)] border border-line bg-canvas p-0 text-carbon shadow-lifted open:motion-safe:animate-rise-in"
       >
         {confirmation && (
           <div className="p-8 text-center md:p-10">
@@ -499,7 +491,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
               Thank you, {firstName}.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-muted">{confirmation.message}</p>
-            <dl className="mt-6 divide-y divide-line rounded-xl border border-line bg-white text-left text-sm">
+            <dl className="mt-6 divide-y divide-line border border-line bg-white text-left text-sm">
               {[
                 ["Discipline", confirmation.discipline],
                 ["Location", confirmation.suburb],
@@ -517,7 +509,7 @@ export function BookingConcierge({ preset }: { preset?: { service: HubService; n
             <form method="dialog" className="mt-8">
               <button
                 autoFocus
-                className="w-full rounded-full bg-carbon px-6 py-3 text-sm font-medium tracking-wide text-canvas transition hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
+                className="w-full bg-carbon px-6 py-3 text-[11px] font-medium uppercase tracking-[0.25em] text-canvas transition-colors hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
               >
                 Close
               </button>

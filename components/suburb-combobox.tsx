@@ -5,7 +5,7 @@ import { Check, MapPin, X } from "lucide-react";
 import { SUBURB_REGIONS, searchSuburbs, suburbKey, type Suburb } from "@/lib/sa-suburbs";
 
 const inputClass =
-  "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-carbon shadow-sm shadow-carbon/[0.02] transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
+  "w-full border border-line bg-white px-4 py-3 text-sm text-carbon transition placeholder:text-ink-muted/70 focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30";
 
 // Search-as-you-type suburb picker following the WAI-ARIA combobox pattern
 // (ArrowUp/ArrowDown to move, Enter to select, Escape to close).
@@ -120,7 +120,7 @@ export function SuburbCombobox({
           ref={listRef}
           role="listbox"
           hidden={!showList}
-          className="absolute z-20 mt-2 max-h-72 w-full overflow-auto rounded-xl border border-line bg-white py-1.5 shadow-lifted"
+          className="absolute z-20 mt-2 max-h-72 w-full overflow-auto border border-line bg-white py-1.5 shadow-lifted"
         >
           {results.map((s, i) => (
             <li

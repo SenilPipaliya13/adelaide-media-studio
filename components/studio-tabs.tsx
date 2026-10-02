@@ -118,7 +118,7 @@ export function StudioTabs() {
         <div
           role="tablist"
           aria-label="Studio"
-          className="grid w-full max-w-md grid-cols-3 gap-1 rounded-2xl border border-line bg-white/70 p-1.5 shadow-ambient backdrop-blur sm:inline-flex sm:w-auto sm:max-w-none sm:rounded-full"
+          className="grid w-full max-w-md grid-cols-3 gap-4 border-b border-line sm:flex sm:w-auto sm:max-w-none sm:gap-12"
         >
           {TABS.map((t) => (
             <button
@@ -134,8 +134,8 @@ export function StudioTabs() {
               tabIndex={tab === t.key ? 0 : -1}
               onClick={() => openTab(t.key)}
               onKeyDown={onTabKeyDown}
-              className={`rounded-xl px-2 py-2.5 text-[10px] font-medium uppercase leading-tight tracking-[0.12em] transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50 sm:rounded-full sm:px-6 sm:text-[11px] sm:tracking-[0.2em] ${
-                tab === t.key ? "bg-carbon text-canvas shadow-sm" : "text-ink-muted hover:bg-stone/60 hover:text-carbon"
+              className={`-mb-px border-b px-1 pb-3 pt-2 text-[10px] font-medium uppercase leading-tight tracking-[0.15em] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50 sm:text-[11px] sm:tracking-[0.25em] ${
+                tab === t.key ? "border-carbon text-carbon" : "border-transparent text-ink-muted hover:text-carbon"
               }`}
             >
               {t.label}
@@ -189,7 +189,7 @@ function DisciplinesPanel({ onReserve }: { onReserve: (service: HubService) => v
           return (
             <article
               key={key}
-              className="group flex flex-col rounded-xl border border-line bg-white p-7 shadow-ambient transition duration-500 hover:-translate-y-0.5 hover:shadow-lifted md:p-9"
+              className="group flex flex-col border border-line bg-white p-7 transition-colors duration-300 hover:border-carbon/30 md:p-9"
             >
               <div className="flex items-start justify-between gap-4">
                 <span className="font-serif text-lg text-brass-deep">{String(i + 1).padStart(2, "0")}</span>
@@ -207,7 +207,7 @@ function DisciplinesPanel({ onReserve }: { onReserve: (service: HubService) => v
                   </li>
                 ))}
               </ul>
-              <p className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-stone/60 px-3 py-1 text-[11px] uppercase tracking-[0.15em] text-carbon/80">
+              <p className="mt-6 inline-flex w-fit items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-carbon/80">
                 <Clock aria-hidden className="h-3.5 w-3.5 text-brass-deep" />
                 Delivered in {turnaround}
               </p>
@@ -215,7 +215,7 @@ function DisciplinesPanel({ onReserve }: { onReserve: (service: HubService) => v
                 <button
                   type="button"
                   onClick={() => onReserve(key)}
-                  className="inline-flex items-center gap-2 rounded-full bg-carbon px-5 py-2.5 text-sm text-canvas transition hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 bg-carbon px-6 py-3 text-[11px] font-medium uppercase tracking-[0.25em] text-canvas transition-colors hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
                 >
                   Reserve this session <ArrowRight className="h-4 w-4" />
                 </button>
@@ -233,7 +233,7 @@ function DisciplinesPanel({ onReserve }: { onReserve: (service: HubService) => v
         })}
       </div>
 
-      <div className="mt-20 rounded-xl border border-line-dark bg-carbon px-7 py-12 text-canvas md:px-12">
+      <div className="mt-20 border border-line-dark bg-carbon px-7 py-12 text-canvas md:px-12">
         <p className="text-center text-[11px] uppercase tracking-[0.3em] text-brass">What every session includes</p>
         <ul className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {INCLUDED.map(({ icon: Icon, title, body }) => (
@@ -258,7 +258,7 @@ function CraftPanel({ onReserve }: { onReserve: () => void }) {
         body="SP Media Co. is a boutique studio, not a production line. The same small team looks after your session from the first conversation to the final file."
       />
 
-      <ol className="mx-auto mt-14 grid max-w-5xl gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+      <ol className="mx-auto mt-14 grid max-w-5xl gap-px border border-line bg-line md:grid-cols-2">
         {PROCESS.map((step, i) => (
           <li key={step.title} className="bg-white p-8 md:p-10">
             <span className="font-serif text-5xl text-brass">{String(i + 1).padStart(2, "0")}</span>
@@ -268,7 +268,7 @@ function CraftPanel({ onReserve }: { onReserve: () => void }) {
         ))}
       </ol>
 
-      <div className="mx-auto mt-14 flex max-w-5xl flex-col items-center justify-between gap-6 rounded-xl border border-line bg-stone/40 px-8 py-8 text-center md:flex-row md:text-left">
+      <div className="mx-auto mt-14 flex max-w-5xl flex-col items-center justify-between gap-6 border border-line bg-stone/40 px-8 py-8 text-center md:flex-row md:text-left">
         <div className="flex items-center gap-4">
           <Images aria-hidden className="hidden h-8 w-8 shrink-0 text-brass-deep md:block" strokeWidth={1.25} />
           <p className="font-serif text-2xl text-carbon">Have a story worth photographing?</p>
@@ -276,7 +276,7 @@ function CraftPanel({ onReserve }: { onReserve: () => void }) {
         <button
           type="button"
           onClick={onReserve}
-          className="inline-flex items-center gap-2 rounded-full bg-carbon px-6 py-3 text-sm text-canvas transition hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
+          className="inline-flex items-center gap-2 bg-carbon px-6 py-3 text-[11px] font-medium uppercase tracking-[0.25em] text-canvas transition-colors hover:bg-carbon-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2"
         >
           Reserve Session <ArrowRight className="h-4 w-4" />
         </button>

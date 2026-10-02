@@ -23,7 +23,7 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/#reserve"
-          className="rounded-full border border-carbon px-5 py-2 text-[11px] font-medium uppercase tracking-[0.2em] text-carbon transition hover:bg-carbon hover:text-canvas"
+          className="border border-carbon px-5 py-2 text-[11px] font-medium uppercase tracking-[0.2em] text-carbon transition hover:bg-carbon hover:text-canvas"
         >
           Reserve
         </Link>

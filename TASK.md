@@ -1,32 +1,28 @@
-# TASK: Strip Dark Mode & Deploy Authentic Editorial Studio Aesthetic
+# TASK: Strip Cheap SaaS Elements & Deploy Editorial Studio Styling
 
-CRITICAL FIX: The site is currently stuck in an ugly "developer pitch-black dark mode" with floating white sans-serif text. Overwrite globals.css and page.tsx with pure, warm gallery styling (warm ivory/linen base, deep carbon text, refined typography, and full story booking).
+Fix the design issues across `app/page.tsx`, `components/studio-tabs.tsx`, and `components/booking-concierge.tsx`:
 
-1. Overwrite `app/globals.css`:
-Replace the contents of `app/globals.css` with clean, warm linen foundations:
+1. Remove Hero Glow:
+   - In `app/page.tsx`, delete the gold blurred radial glow block behind the masthead.
 
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+2. Clean Pull Quote:
+   - In `app/page.tsx`, remove the frosted-glass rounded card, shadow, and `backdrop-blur` from the quote.
+   - Restyle it as a clean editorial pull quote between a top and bottom hairline border (`border-y border-line py-8 max-w-2xl mx-auto`).
 
-:root {
-  --bg-main: #FBF9F5;
-  --text-main: #1C1A17;
-  --text-muted: #6E685F;
-  --border-line: #E7E2D8;
-  --card-bg: #FFFFFF;
-  --accent-gold: #9E7D47;
-}
+3. Fix Studio Tabs:
+   - In `components/studio-tabs.tsx`, replace the rounded pill app toggle with clean uppercase text tabs. Use a simple underline for the active tab instead of a pill background.
 
-body {
-  background-color: #FBF9F5 !important;
-  color: #1C1A17 !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+4. Remove SaaS Corner Radius & Drop Shadows:
+   - Strip `rounded-xl`, `shadow-ambient`, and `hover:-translate-y-0.5` from discipline cards, guarantee cards, and grids.
+   - Use crisp borders (`border border-line`) with subtle hover color changes. No floating cards.
 
-/* Ensure serif classes use elegant editorial styling */
-.font-serif {
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-}
+5. Editorial Buttons:
+   - Change pill-shaped buttons to clean rectangular buttons with letter-spaced uppercase text.
+
+6. Clean Reassurance Badges:
+   - In `components/booking-concierge.tsx`, remove the green-tick pill badges.
+   - Replace with a quiet single line separated by dots: `ABN REGISTERED · METRO ADELAIDE TRAVEL INCLUDED · HIGH-RES DIGITAL MASTERS`.
+
+7. Verification:
+   - Run `npm run build` to confirm zero compilation errors.
+   - Update `STATUS.md`.
