@@ -72,6 +72,33 @@ export const FLOOR_PLAN_ADD_ON = {
   hint: "Simplified layout drawing for brochures and portals",
 } as const;
 
+// Service cards on the homepage studio hub. `href` points at the matching vertical page, when there is one.
+export const HUB_SERVICES = {
+  commercial: {
+    label: "Commercial",
+    body: "Headshots, brand stories and event coverage for Lot Fourteen startups and CBD businesses.",
+    href: "/commercial",
+  },
+  "real-estate": {
+    label: "Real Estate",
+    body: "HDR interiors, drone cutaways, agent reels and council-ready floor plans for every listing.",
+    href: "/real-estate",
+  },
+  celebrations: {
+    label: "Celebrations & Events",
+    body: "Weddings in the Barossa, McLaren Vale and Adelaide Hills, plus milestones worth keeping.",
+    href: "/weddings",
+  },
+  portraits: {
+    label: "Portraits",
+    body: "Unhurried individual, couple and family portraits, shot somewhere around Adelaide that means something to you.",
+    href: null,
+  },
+} as const;
+
+export type HubService = keyof typeof HUB_SERVICES;
+export const HUB_SERVICE_KEYS = Object.keys(HUB_SERVICES) as HubService[];
+
 export const LOCATIONS = {
   cbd: { label: "Adelaide CBD", scope: "Metro" },
   "north-adelaide": { label: "North Adelaide", scope: "Metro" },

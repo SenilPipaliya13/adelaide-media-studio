@@ -22,10 +22,10 @@ export function SiteHeader() {
           ))}
         </nav>
         <Link
-          href="/#inquire"
+          href="/#book"
           className="rounded-md border border-copper px-4 py-2 text-sm text-copper transition hover:bg-copper hover:text-obsidian-950"
         >
-          Get a quote
+          Book a session
         </Link>
       </div>
       <nav className="flex justify-center gap-5 border-t border-slate-800 py-2 text-xs text-slate-300 md:hidden">

@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import {
   FLOOR_PLAN_ADD_ON,
+  HUB_SERVICE_KEYS,
   LAUNCH_NICHE,
   LOCATION_KEYS,
   MAX_EXTRA_HOURS,
   NICHE_KEYS,
+  type HubService,
   type LocationKey,
   type Niche,
 } from "@/lib/catalog";
 import { sendLeadNotification } from "@/lib/email";
 import { calculateEstimate } from "@/lib/pricing";
+import { findSuburb } from "@/lib/sa-suburbs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Australian mobile or landline, allowing spaces, dashes and +61.
@@ -35,17 +38,37 @@ export async function POST(req: Request) {
 
   const fields: Record<string, string> = {};
 
-  const niche = body.niche as Niche;
-  if (!NICHE_KEYS.includes(niche)) fields.niche = "Choose a shoot type.";
+  // The homepage studio hub sends a story-led enquiry: first/last name, a suburb from the SA
+  // dataset and a free-form story, with no package, add-ons or date. Its only niche is the
+  // launch application. Vertical pages send the full package form.
+  const isHub = body.source === "studio-hub";
+
+  const niche: Niche | null = isHub
+    ? body.niche === LAUNCH_NICHE
+      ? LAUNCH_NICHE
+      : null
+    : NICHE_KEYS.includes(body.niche as Niche)
+      ? (body.niche as Niche)
+      : null;
+  if (!isHub && !niche) fields.niche = "Choose a shoot type.";
+
+  const interest = HUB_SERVICE_KEYS.includes(body.interest as HubService)
+    ? (body.interest as HubService)
+    : null;
+
+  const suburbBody = (body.suburb ?? {}) as Body;
+  const suburb = findSuburb(str(suburbBody.name, 100), str(suburbBody.postcode, 4)) ?? null;
+  if (isHub && !suburb) fields.suburb = "Choose your suburb from the list.";
 
   const locationKey = LOCATION_KEYS.includes(body.locationKey as LocationKey)
     ? (body.locationKey as LocationKey)
     : null;
   const location = str(body.location);
 
-  // The complimentary launch session is a fixed 45-minute shoot, so add-ons are ignored.
+  // The complimentary launch session is a fixed 45-minute shoot and hub enquiries have no
+  // package yet, so add-ons are ignored for both.
   const isLaunch = niche === LAUNCH_NICHE;
-  const addOns = (isLaunch ? {} : body.addOns ?? {}) as Body;
+  const addOns = (isLaunch || isHub ? {} : body.addOns ?? {}) as Body;
   const drone = addOns.drone === true;
   const rush = addOns.rush === true;
   // Floor plans are only offered with the real estate package.
@@ -55,8 +78,17 @@ export async function POST(req: Request) {
     fields.extraHours = `Extra hours must be between 0 and ${MAX_EXTRA_HOURS}.`;
   }
 
-  const name = str(body.name, 100);
-  if (name.length < 2) fields.name = "Please enter your name.";
+  let name: string;
+  if (isHub) {
+    const firstName = str(body.firstName, 50);
+    const lastName = str(body.lastName, 50);
+    if (!firstName) fields.firstName = "Please enter your first name.";
+    if (!lastName) fields.lastName = "Please enter your last name.";
+    name = `${firstName} ${lastName}`.trim();
+  } else {
+    name = str(body.name, 100);
+    if (name.length < 2) fields.name = "Please enter your name.";
+  }
 
   const email = str(body.email, 200).toLowerCase();
   if (!EMAIL_RE.test(email)) fields.email = "Please enter a valid email.";
@@ -66,42 +98,57 @@ export async function POST(req: Request) {
     fields.phone = "Please enter a valid Australian phone number.";
   }
 
+  // The hub form has no date picker; the package form requires one.
   const preferredDate = str(body.preferredDate, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate) || Number.isNaN(Date.parse(preferredDate))) {
-    fields.preferredDate = "Please choose a date.";
-  } else {
-    // Compare against today's date in Adelaide so late-evening bookings aren't rejected.
-    const todayAdelaide = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Adelaide" });
-    if (preferredDate < todayAdelaide) fields.preferredDate = "Date can't be in the past.";
+  if (!isHub || preferredDate) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate) || Number.isNaN(Date.parse(preferredDate))) {
+      fields.preferredDate = "Please choose a date.";
+    } else {
+      // Compare against today's date in Adelaide so late-evening bookings aren't rejected.
+      const todayAdelaide = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Adelaide" });
+      if (preferredDate < todayAdelaide) fields.preferredDate = "Date can't be in the past.";
+    }
   }
 
   const message = str(body.message, 2000);
+  if (isHub && message.length < 10) fields.message = "Tell us a little about your story.";
 
   if (Object.keys(fields).length > 0) {
     return NextResponse.json({ error: "Please fix the highlighted fields.", fields }, { status: 422 });
   }
 
   // Internal floor cost for the studio only. It is logged and stored, never returned to the client.
-  const estimate = calculateEstimate({ niche, location: locationKey, drone, rush, floorPlan, extraHours });
+  // Story enquiries have no package yet, so they are quoted from scratch.
+  const estimate = niche
+    ? calculateEstimate({ niche, location: locationKey, drone, rush, floorPlan, extraHours })
+    : null;
   const reference = `SPM-${Date.now().toString(36).toUpperCase()}`;
 
   const inquiry = {
     reference,
+    source: isHub ? ("studio-hub" as const) : ("package-form" as const),
     niche,
+    interest,
+    suburb,
     location: location || null,
     locationKey,
     addOns: { drone, rush, floorPlan, extraHours },
     name,
     email,
     phone,
-    preferredDate,
+    preferredDate: preferredDate || null,
     message: message || null,
     estimate,
     receivedAt: new Date().toISOString(),
   };
 
   // TODO: persist to Supabase `inquiries` table once credentials are configured.
-  console.info("[inquire] new inquiry", inquiry.reference, inquiry.niche, inquiry.estimate.total);
+  console.info(
+    "[inquire] new inquiry",
+    inquiry.reference,
+    inquiry.niche ?? inquiry.source,
+    inquiry.estimate?.total ?? "story (quote from scratch)",
+  );
 
   const launchApplicationNumber = isLaunch ? ++launchApplicationCount : undefined;
   if (isLaunch) {
@@ -123,7 +170,9 @@ export async function POST(req: Request) {
       reference,
       message: isLaunch
         ? "Thank you for applying to the Adelaide Launch Initiative. We will review your application and reply within 24 hours."
-        : "Thank you. We will review your brief and send a bespoke proposal within 24 hours.",
+        : isHub
+          ? "Thank you for sharing your story. We will be in touch within 24 hours to plan your session."
+          : "Thank you. We will review your brief and send a bespoke proposal within 24 hours.",
     },
     { status: 201 },
   );

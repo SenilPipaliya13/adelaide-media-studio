@@ -1,70 +1,14 @@
-import Link from "next/link";
-import {
-  ArrowRight,
-  Aperture,
-  Briefcase,
-  Camera,
-  Film,
-  Gauge,
-  Heart,
-  Home,
-  Sparkles,
-  Star,
-  Trophy,
-} from "lucide-react";
-import { InquiryForm } from "@/components/inquiry-form";
+import { Quote, Sparkles } from "lucide-react";
+import { WireframeHub } from "@/components/wireframe-hub";
 import { LAUNCH_APPLY_HASH } from "@/lib/catalog";
+import { quoteOfTheDay } from "@/lib/quotes";
 
-const LAUNCH_OFFER = {
-  get: [
-    "Complimentary 45-minute hero brand session",
-    "5 master high-res commercial stills, shot on full-frame Canon EOS R6 Mark III glass",
-    "Commercial usage release",
-  ],
-  ask: [
-    "A verified Google review",
-    "Permission to feature the imagery in our launch portfolio",
-  ],
-};
-
-const VERTICALS = [
-  {
-    href: "/weddings",
-    icon: Heart,
-    title: "Weddings",
-    body: "Barossa, McLaren Vale and Adelaide Hills celebrations, captured with an editorial eye.",
-    note: "Full-day coverage",
-  },
-  {
-    href: "/commercial",
-    icon: Briefcase,
-    title: "Commercial",
-    body: "Headshots, events and brand content for Lot Fourteen startups and CBD businesses.",
-    note: "Quoted per brief",
-  },
-  {
-    href: "/real-estate",
-    icon: Home,
-    title: "Real Estate",
-    body: "HDR stills, drone cutaways and an agent reel in a single listing package.",
-    note: "Intro listing package",
-  },
-  {
-    href: "/sports",
-    icon: Trophy,
-    title: "Sports",
-    body: "SANFL, athletics and Gather Round action, plus team media days.",
-    note: "Match & media days",
-  },
-];
-
-const GEAR = [
-  { icon: Aperture, stat: "32.5MP", label: "Full-frame sensor" },
-  { icon: Gauge, stat: "40fps", label: "Electronic burst" },
-  { icon: Film, stat: "7K", label: "Video capture" },
-];
+// Re-render hourly so the daily quote rolls over at Adelaide midnight without a client-side flash.
+export const revalidate = 3600;
 
 export default function HomePage() {
+  const quote = quoteOfTheDay();
+
   return (
     <>
       <a
@@ -80,131 +24,32 @@ export default function HomePage() {
       </a>
 
       <section className="relative overflow-hidden border-b border-slate-800">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(192,138,91,0.15),transparent_60%)]" />
-        <div className="relative mx-auto max-w-6xl px-6 py-28 md:py-40">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-copper">
-            Adelaide · South Australia
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(192,138,91,0.14),transparent_65%)]" />
+        <div className="relative mx-auto max-w-4xl px-6 py-24 text-center md:py-32">
+          <p className="text-xs font-medium uppercase tracking-[0.35em] text-copper">
+            Boutique photography studio · Adelaide, South Australia
           </p>
-          <h1 className="mt-6 max-w-4xl font-serif text-5xl leading-[1.05] text-ivory md:text-7xl">
-            Photography & video for the moments that matter.
+          <h1 className="mt-6 font-serif text-6xl leading-none tracking-tight text-ivory md:text-8xl">
+            SP Media <span className="text-copper">Co.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-300">
-            SP Media Co. covers weddings, businesses, property and sport across Adelaide and
-            regional South Australia with one studio and one standard.
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
+            A small studio for people, places and businesses with a story worth telling. Shot on
+            the full-frame Canon EOS R6 Mark III and edited by hand.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="#inquire"
-              className="inline-flex items-center gap-2 rounded-md bg-copper px-6 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
-            >
-              Request a tailored quote <ArrowRight className="h-4 w-4" />
-            </a>
-            <a
-              href="#work"
-              className="rounded-md border border-slate-600 px-6 py-3 text-sm text-ivory transition hover:border-ivory"
-            >
-              What we shoot
-            </a>
-          </div>
+
+          <figure className="mx-auto mt-14 max-w-2xl border-t border-slate-800 pt-10">
+            <Quote aria-hidden className="mx-auto h-5 w-5 text-copper" />
+            <blockquote className="mt-4 font-serif text-2xl italic leading-snug text-ivory-muted md:text-3xl">
+              &ldquo;{quote.text}&rdquo;
+            </blockquote>
+            <figcaption className="mt-4 text-xs uppercase tracking-[0.3em] text-slate-400">
+              {quote.author} · Today&apos;s quote
+            </figcaption>
+          </figure>
         </div>
       </section>
 
-      <section id="launch-initiative" className="mx-auto max-w-6xl scroll-mt-24 px-6 pt-24">
-        <div className="relative overflow-hidden rounded-2xl border border-copper/40 bg-obsidian-900 p-8 md:p-12">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(192,138,91,0.12),transparent_60%)]" />
-          <div className="relative">
-            <p className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-copper">
-              <Sparkles className="h-4 w-4" /> Limited to 5 places
-            </p>
-            <h2 className="mt-4 max-w-3xl font-serif text-3xl text-ivory md:text-4xl">
-              Adelaide Launch Initiative: 5 Complimentary Commercial Sessions
-            </h2>
-            <p className="mt-4 max-w-3xl text-slate-300">
-              To celebrate our Adelaide launch, SP Media Co. is partnering with 5 local founders,
-              businesses, or real estate specialists for a complimentary 45-minute hero brand session.
-            </p>
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-xl border border-slate-800 bg-obsidian-950 p-6">
-                <Camera className="h-5 w-5 text-copper" />
-                <h3 className="mt-4 font-serif text-xl text-ivory">What you get</h3>
-                <ul className="mt-3 space-y-2 text-sm text-slate-300">
-                  {LAUNCH_OFFER.get.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-xl border border-slate-800 bg-obsidian-950 p-6">
-                <Star className="h-5 w-5 text-copper" />
-                <h3 className="mt-4 font-serif text-xl text-ivory">What we ask</h3>
-                <ul className="mt-3 space-y-2 text-sm text-slate-300">
-                  {LAUNCH_OFFER.ask.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <a
-              href={LAUNCH_APPLY_HASH}
-              className="mt-8 inline-flex items-center gap-2 rounded-md bg-copper px-6 py-3 text-sm font-medium text-obsidian-950 transition hover:bg-copper-light"
-            >
-              Apply for the Launch Initiative <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section id="work" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-        <h2 className="font-serif text-3xl text-ivory md:text-4xl">Four specialties, one studio</h2>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2">
-          {VERTICALS.map(({ href, icon: Icon, title, body, note }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group rounded-xl border border-slate-800 bg-obsidian-900 p-8 transition hover:border-copper/60"
-            >
-              <Icon className="h-6 w-6 text-copper" />
-              <h3 className="mt-5 font-serif text-2xl text-ivory">{title}</h3>
-              <p className="mt-2 text-slate-300">{body}</p>
-              <div className="mt-6 flex items-center justify-between text-sm">
-                <span className="text-slate-400">{note}</span>
-                <span className="inline-flex items-center gap-1 text-copper transition group-hover:gap-2">
-                  Explore <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="border-y border-slate-800 bg-obsidian-900">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-[1.2fr_2fr] md:items-center">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-copper">The kit</p>
-            <h2 className="mt-4 font-serif text-3xl text-ivory">Shot on the Canon EOS R6 Mark III</h2>
-            <p className="mt-4 text-slate-300">
-              A full-frame body that handles a candlelit reception and a SANFL goal-square contest
-              equally well. Every client gets the same flagship-level files.
-            </p>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {GEAR.map(({ icon: Icon, stat, label }) => (
-              <div key={label} className="rounded-xl border border-slate-800 bg-obsidian-950 p-6 text-center">
-                <Icon className="mx-auto h-5 w-5 text-copper" />
-                <p className="mt-3 font-serif text-3xl text-ivory">{stat}</p>
-                <p className="mt-1 text-xs text-slate-400">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="inquire" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-        <h2 className="font-serif text-3xl text-ivory md:text-4xl">Tell us about your shoot</h2>
-        <p className="mb-10 mt-3 text-slate-300">
-          Pick your shoot, location and add-ons. We&apos;ll review your brief and send a bespoke proposal.
-        </p>
-        <InquiryForm />
-      </section>
+      <WireframeHub />
     </>
   );
 }

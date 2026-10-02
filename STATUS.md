@@ -1,5 +1,48 @@
 # STATUS — SP Media Co.
 
+## Wireframe Overhaul: Boutique Studio Hub + SA Suburb Autocomplete
+**Status:** ✅ Complete · 2026-10-02 (ACST)
+
+### Build
+`npm run build` passes on Next.js 15.5.26 with no TypeScript errors, lint errors or warnings. `/` is now 7.92 kB / 116 kB First Load JS (was 183 B / 113 kB) because the hub and combobox are client components. `/` is ISR with `revalidate = 3600` so the daily quote rolls over. Vertical pages are 124 B / 110 kB. Shared JS is unchanged at 103 kB.
+
+### Changes
+| File | Change |
+|---|---|
+| `lib/sa-suburbs.ts` (new) | 107 SA suburbs and postcodes (64 metro, 43 regional, including the 10 in TASK.md), classified as `metro` ("Metro Adelaide (Standard Included)") or `regional` ("Regional SA (Custom Travel)"). Has `searchSuburbs()` (ranks name prefix, then word start, then postcode) and `findSuburb()` for server validation. Adelaide Hills towns are classed as regional, matching the existing "Regional travel" scope for the Hills. |
+| `components/suburb-combobox.tsx` (new) | Client ARIA combobox. Search as you type, ArrowUp/Down/Enter/Escape, clear button. Each option shows name, postcode and a Metro/Regional badge. After a pick it shows a pill: "Metro Adelaide Service Zone - Travel Included", or a custom-travel note for regional. |
+| `components/wireframe-hub.tsx` (new) | Client 3-tab hub (ARIA tabs, arrow-key navigation). **Our Services:** Commercial, Real Estate, Celebrations & Events, Portraits cards, each with "Book a session" (opens the Book tab with that service noted) and "See the work" where a vertical page exists. **Book a Session:** First/Last name, email, phone, suburb autocomplete and the "Tell us about your story — we will convert it into photography." textarea. **Contact:** phone (`tel:`), WhatsApp (`wa.me`) and email cards. The `#book`, `#services`, `#contact`, legacy `#inquire` and `#apply-launch-initiative` hashes open the right tab. The launch hash puts the form in launch-application mode. |
+| `app/page.tsx` | Rebuilt: launch banner, centred SP Media Co. wordmark hero, the quote of the day, then the hub. The old hero, four-vertical grid, launch section, R6 kit strip and package `InquiryForm` were removed from the homepage. The package form is still on every vertical page. |
+| `lib/quotes.ts` (new) | 7 quotes (Ansel Adams, Dorothea Lange, Henri Cartier-Bresson). `quoteOfTheDay()` picks one by calendar day in `Australia/Adelaide`. |
+| `lib/contact.ts` (new) | `STUDIO_PHONE`, `STUDIO_EMAIL` (`spmediaco7@gmail.com`), and the derived `tel:` and WhatsApp links. |
+| `lib/catalog.ts` | New `HUB_SERVICES` / `HUB_SERVICE_KEYS` for the service cards. |
+| `app/api/inquire/route.ts` | Accepts hub submissions (`source: "studio-hub"`). They need a first and last name, email, AU phone, a suburb that exists in the dataset and a story of at least 10 characters. They have no date, package or add-ons. `niche` can only be `launch` and `interest` is optional. Hub leads with no niche have no estimate (`null`). Package-form validation is unchanged, and a date is still required there. The hub success message is "Thank you for sharing your story…". |
+| `lib/email.ts` | Lead emails for hub leads show **Suburb** (e.g. "Glenelg 5045") and **Region status** (e.g. "Metro Adelaide (Standard Included) · Metro Adelaide Service Zone - Travel Included"). The brief heading becomes "Client story". The subject includes the suburb, e.g. "New Portraits session inquiry · Jo Smith · Glenelg · SPM-…". Scope and date are omitted or marked "Not given" when absent. |
+| `components/site-header.tsx` | The CTA is now "Book a session" and links to `/#book`. |
+
+### Verification (`next start`, `RESEND_API_KEY` blanked)
+- Hub story (Glenelg, portraits) → 201. The lead log shows `suburb.region: "metro"` and `estimate: null`.
+- Hub launch application (Tanunda) → 201 with the launch message, logged as `[LAUNCH OFFER APPLICANT] #1`, region `regional`.
+- Invalid hub payload (bad postcode, empty names, short story, `niche: weddings`) → 422 with field errors for suburb, firstName, lastName, email, phone and message.
+- Package-form wedding (Barossa, drone, rush, +2 hrs) → 201, floor total 3520 as before. Package form with no date → 422 `preferredDate`.
+- The homepage HTML contains the three tabs, the story textarea label, the quote, the `wa.me` link and the launch links.
+- `leadText` / `leadHtml` rendered for a hub lead: Suburb and Region status lines are present, and client input is HTML-escaped.
+- No pricing constants (`hourlyRate`) appear in `.next/static`.
+- **Not tested:** combobox keyboard and mouse use, tab switching and hash deep links in a real browser, and a real Resend send.
+
+### Notes
+- **`STUDIO_PHONE` in `lib/contact.ts` is a placeholder (`0400 000 000`).** The Contact tab's call and WhatsApp links are dead until a real number is set. No studio phone exists anywhere in the repo.
+- The studio email on the Contact tab is `spmediaco7@gmail.com` (the lead inbox). Swap it for a domain address once `spmediaco.com.au` mail is set up.
+- Sports no longer has a homepage card, because TASK.md lists four services without it. It is still in the header and footer nav.
+- "Celebrations & Events" links to `/weddings`. "Portraits" has no vertical page, so its card only offers booking.
+- The launch campaign now runs through the hub form (banner → Book tab in launch mode). The long launch section with the "What you get / What we ask" cards was cut. The same terms are shown in the form when launch mode is active.
+
+### Active backlog
+- Set the real studio phone in `lib/contact.ts`.
+- Test the combobox, the tabs and the hash deep links in a browser (desktop and mobile).
+- Consider a `/portraits` vertical page and suburb landing pages that reuse `lib/sa-suburbs.ts`.
+- All earlier backlog items below are still open.
+
 ## Floor Plan Deliverables (Real Estate)
 **Status:** ✅ Complete · 2026-09-26 (ACST)
 

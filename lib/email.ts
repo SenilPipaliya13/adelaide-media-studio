@@ -1,6 +1,15 @@
 import "server-only";
 import { Resend } from "resend";
-import { LAUNCH_NICHE, LOCATIONS, NICHES, type LocationKey, type Niche } from "@/lib/catalog";
+import {
+  HUB_SERVICES,
+  LAUNCH_NICHE,
+  LOCATIONS,
+  NICHES,
+  type HubService,
+  type LocationKey,
+  type Niche,
+} from "@/lib/catalog";
+import { SUBURB_REGIONS, type Suburb } from "@/lib/sa-suburbs";
 
 const DEFAULT_NOTIFICATION_EMAIL = "spmediaco7@gmail.com";
 // Resend's shared sender works without a verified domain. Set RESEND_FROM once spmediaco.com.au is verified.
@@ -8,14 +17,21 @@ const DEFAULT_FROM = "SP Media Co. Leads <onboarding@resend.dev>";
 
 export type LeadNotification = {
   reference: string;
-  niche: Niche;
+  // "studio-hub" is the homepage story form; "package-form" is the vertical page quote form.
+  source: "studio-hub" | "package-form";
+  // Null for hub story enquiries that aren't launch applications.
+  niche: Niche | null;
+  // Service card the client came from on the hub, if any.
+  interest: HubService | null;
+  // Suburb picked from the SA dataset (hub form only).
+  suburb: Suburb | null;
   location: string | null;
   locationKey: LocationKey | null;
   addOns: { drone: boolean; rush: boolean; floorPlan: boolean; extraHours: number };
   name: string;
   email: string;
   phone: string;
-  preferredDate: string;
+  preferredDate: string | null;
   message: string | null;
   receivedAt: string;
   // Running count of launch applications on this server instance, set for launch leads only.
@@ -34,6 +50,21 @@ function formatDate(iso: string) {
     : d.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
+function serviceLabel(lead: LeadNotification) {
+  if (lead.niche) return NICHES[lead.niche].label;
+  return lead.interest ? `${HUB_SERVICES[lead.interest].label} session` : "Studio session";
+}
+
+function suburbText(lead: LeadNotification) {
+  return lead.suburb ? `${lead.suburb.name} ${lead.suburb.postcode}` : "Not selected";
+}
+
+function regionText(lead: LeadNotification) {
+  if (!lead.suburb) return "Unknown (no suburb selected)";
+  const region = SUBURB_REGIONS[lead.suburb.region];
+  return `${region.label} · ${region.reassurance}`;
+}
+
 function locationText(lead: LeadNotification) {
   const parts: string[] = [];
   if (lead.locationKey) {
@@ -45,6 +76,7 @@ function locationText(lead: LeadNotification) {
 }
 
 function scopeItems(lead: LeadNotification) {
+  if (!lead.niche) return [];
   const items: string[] = [...NICHES[lead.niche].deliverables];
   if (lead.niche === LAUNCH_NICHE) return items;
   if (lead.addOns.drone) items.push("Add-on: drone coverage");
@@ -57,16 +89,18 @@ function scopeItems(lead: LeadNotification) {
 }
 
 export function leadSubject(lead: LeadNotification) {
-  const service = NICHES[lead.niche].label;
   if (lead.niche === LAUNCH_NICHE) {
     return `[LAUNCH OFFER APPLICANT] #${lead.launchApplicationNumber ?? "?"} · ${lead.name} · ${lead.reference}`;
   }
-  return `New ${service} inquiry · ${lead.name} · ${lead.preferredDate} · ${lead.reference}`;
+  return [`New ${serviceLabel(lead)} inquiry`, lead.name, lead.suburb?.name, lead.preferredDate, lead.reference]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 export function leadHtml(lead: LeadNotification) {
   const e = escapeHtml;
-  const service = NICHES[lead.niche].label;
+  const service = serviceLabel(lead);
+  const scope = scopeItems(lead);
   const telHref = lead.phone.replace(/[^\d+]/g, "");
 
   const row = (label: string, value: string) => `
@@ -100,16 +134,25 @@ export function leadHtml(lead: LeadNotification) {
             ${row("Name", e(lead.name))}
             ${row("Email", `<a href="mailto:${e(lead.email)}" style="color:#9a6b43;">${e(lead.email)}</a>`)}
             ${row("Phone", `<a href="tel:${e(telHref)}" style="color:#9a6b43;">${e(lead.phone)}</a>`)}
-            ${row("Location", e(locationText(lead)))}
-            ${row("Preferred date", e(formatDate(lead.preferredDate)))}
+            ${
+              lead.source === "studio-hub"
+                ? row("Suburb", e(suburbText(lead))) + row("Region status", e(regionText(lead)))
+                : row("Location", e(locationText(lead)))
+            }
+            ${row("Preferred date", lead.preferredDate ? e(formatDate(lead.preferredDate)) : "Not given")}
           </table>
-
+${
+  scope.length
+    ? `
           <h2 style="margin:24px 0 8px;font-size:14px;color:#0b0b0c;text-transform:uppercase;letter-spacing:1px;">Scope &amp; add-ons</h2>
           <ul style="margin:0;padding-left:20px;color:#0b0b0c;font-size:14px;line-height:1.6;">
-            ${scopeItems(lead).map((i) => `<li>${e(i)}</li>`).join("")}
-          </ul>
-
-          <h2 style="margin:24px 0 8px;font-size:14px;color:#0b0b0c;text-transform:uppercase;letter-spacing:1px;">Client brief</h2>
+            ${scope.map((i) => `<li>${e(i)}</li>`).join("")}
+          </ul>`
+    : ""
+}
+          <h2 style="margin:24px 0 8px;font-size:14px;color:#0b0b0c;text-transform:uppercase;letter-spacing:1px;">${
+            lead.source === "studio-hub" ? "Client story" : "Client brief"
+          }</h2>
           <p style="margin:0;padding:12px;background:#f4f4f5;border-radius:6px;color:#0b0b0c;font-size:14px;line-height:1.6;white-space:pre-wrap;">${
             lead.message ? e(lead.message) : "<em>No message provided.</em>"
           }</p>
@@ -123,20 +166,22 @@ export function leadHtml(lead: LeadNotification) {
 }
 
 export function leadText(lead: LeadNotification) {
+  const scope = scopeItems(lead);
+  const isHub = lead.source === "studio-hub";
   return [
     leadSubject(lead),
     "",
-    `Service: ${NICHES[lead.niche].label}`,
+    `Service: ${serviceLabel(lead)}`,
     `Name: ${lead.name}`,
     `Email: ${lead.email}`,
     `Phone: ${lead.phone}`,
-    `Location: ${locationText(lead)}`,
-    `Preferred date: ${lead.preferredDate}`,
+    ...(isHub
+      ? [`Suburb: ${suburbText(lead)}`, `Region status: ${regionText(lead)}`]
+      : [`Location: ${locationText(lead)}`]),
+    `Preferred date: ${lead.preferredDate ?? "Not given"}`,
+    ...(scope.length ? ["", "Scope & add-ons:", ...scope.map((i) => `- ${i}`)] : []),
     "",
-    "Scope & add-ons:",
-    ...scopeItems(lead).map((i) => `- ${i}`),
-    "",
-    "Client brief:",
+    isHub ? "Client story:" : "Client brief:",
     lead.message ?? "(none)",
   ].join("\n");
 }

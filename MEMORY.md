@@ -6,7 +6,7 @@ Project memory base. Read this before starting any task. The standards below are
 
 ### Next.js 15 App Router & React 19
 - Next.js 15.5 (App Router only, no `pages/` directory) with React 19.1 and TypeScript (`strict: true`).
-- Components in `app/` and `components/` are Server Components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs. `components/inquiry-form.tsx` is currently the only client component.
+- Components in `app/` and `components/` are Server Components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs. Current client components: `components/inquiry-form.tsx` (vertical pages), `components/wireframe-hub.tsx` and `components/suburb-combobox.tsx` (homepage).
 - API endpoints are Route Handlers (`app/<path>/route.ts`) that export named HTTP methods (`POST`, `GET`, …).
 - Page metadata uses the `metadata` export or `generateMetadata`, not `<head>` tags.
 - Use the `@/` path alias for imports (`@/lib/...`, `@/components/...`).
